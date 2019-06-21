@@ -3090,6 +3090,44 @@ __git_complete ()
 		|| complete -o default -o nospace -F $wrapper $1
 }
 
+if ! git --list-cmds=main >/dev/null 2>&1; then
+
+	declare -A __git_cmds
+	__git_cmds[list-complete]="apply blame cherry config difftool fsck help instaweb mergetool reflog remote repack replace request-pull send-email show-branch stage whatchanged"
+	__git_cmds[list-guide]="attributes cli core-tutorial cvs-migration diffcore everyday glossary hooks ignore modules namespaces repository-layout revisions tutorial-2 tutorial workflows"
+	__git_cmds[list-mainporcelain]="add am archive bisect branch bundle checkout cherry-pick citool clean clone commit describe diff fetch format-patch gc grep gui init gitk log merge mv notes pull push range-diff rebase reset revert rm shortlog show stash status submodule tag worktree"
+	__git_cmds[main]="add add--interactive am annotate apply archimport archive bisect bisect--helper blame branch bundle cat-file check-attr check-ignore check-mailmap check-ref-format checkout checkout-index cherry cherry-pick citool clean clone column commit commit-graph commit-tree config count-objects credential credential-cache credential-cache--daemon credential-gnome-keyring credential-libsecret credential-store cvsexportcommit cvsimport cvsserver daemon describe diff diff-files diff-index diff-tree difftool difftool--helper fast-export fast-import fetch fetch-pack filter-branch fmt-merge-msg for-each-ref format-patch fsck fsck-objects gc get-tar-commit-id grep gui gui--askpass hash-object help http-backend http-fetch http-push imap-send index-pack init init-db instaweb interpret-trailers legacy-stash log ls-files ls-remote ls-tree mailinfo mailsplit merge merge-base merge-file merge-index merge-octopus merge-one-file merge-ours merge-recursive merge-resolve merge-subtree merge-tree mergetool mktag mktree multi-pack-index mv mw name-rev notes p4 pack-objects pack-redundant pack-refs patch-id prune prune-packed pull push quiltimport range-diff read-tree rebase receive-pack reflog remote remote-ext remote-fd remote-ftp remote-ftps remote-http remote-https remote-mediawiki remote-testsvn repack replace request-pull rerere reset rev-list rev-parse revert rm send-email send-pack sh-i18n--envsubst shell shortlog show show-branch show-index show-ref stage stash status stripspace submodule submodule--helper subtree svn symbolic-ref tag unpack-file unpack-objects update-index update-ref update-server-info upload-archive upload-pack var verify-commit verify-pack verify-tag web--browse whatchanged worktree write-tree"
+	__git_cmds[others]="compare list related remote-hg remote-sync send-series"
+	__git_cmds[parseopt]="add am apply archive bisect--helper blame branch cat-file check-attr check-ignore check-mailmap checkout checkout-index cherry cherry-pick clean clone column commit commit-graph config count-objects describe difftool fast-export fetch fmt-merge-msg for-each-ref format-patch fsck fsck-objects gc grep hash-object help init init-db interpret-trailers log ls-files ls-remote ls-tree merge merge-base merge-file mktree multi-pack-index mv name-rev notes pack-objects pack-refs pickaxe prune prune-packed pull push range-diff read-tree rebase rebase--interactive receive-pack reflog remote repack replace rerere reset revert rm send-pack shortlog show show-branch show-index show-ref stage stash status stripspace symbolic-ref tag update-index update-ref update-server-info upload-pack verify-commit verify-pack verify-tag version whatchanged write-tree "
+
+	# Override __git
+	__git ()
+	{
+		case "$1" in
+		--list-cmds=*)
+			IFS=, read -r -a cmds <<< "${1##--list-cmds=}"
+			for x in ${cmds[@]}; do
+				case "$x" in
+				nohelpers)
+					;;
+				alias)
+					;;
+				config)
+					;;
+				*)
+					echo ${__git_cmds[$x]}
+					;;
+				esac
+			done
+			return
+			;;
+		esac
+		git ${__git_C_args:+"${__git_C_args[@]}"} \
+			${__git_dir:+--git-dir="$__git_dir"} "$@" 2>/dev/null
+	}
+
+fi
+
 __git_complete git __git_main
 __git_complete gitk __gitk_main
 

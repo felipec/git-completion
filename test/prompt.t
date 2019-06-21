@@ -179,7 +179,7 @@ test_expect_success 'prompt - interactive rebase' '
 	test_cmp expected "$actual"
 '
 
-test_expect_success 'prompt - rebase merge' '
+test_expect_unstable 'prompt - rebase merge' '
 	printf " (b2|REBASE-i 1/3)" >expected &&
 	git checkout b2 &&
 	test_when_finished "git checkout master" &&
