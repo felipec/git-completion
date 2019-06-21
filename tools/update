@@ -1,0 +1,16 @@
+#!/bin/sh
+
+url="https://git.kernel.org/pub/scm/git/git.git/plain"
+version="2.22.0"
+
+git stash push -q &&
+git checkout -q upstream &&
+curl -s -o git-completion.zsh "${url}/contrib/completion/git-completion.zsh?h=v${version}" &&
+curl -s -o git-completion.bash "${url}/contrib/completion/git-completion.bash?h=v${version}" &&
+curl -s -o git-prompt.sh "${url}/contrib/completion/git-prompt.sh?h=v${version}" &&
+curl -s -o test/completion.t "${url}/t/t9902-completion.sh?h=v${version}" &&
+curl -s -o test/prompt.t "${url}/t/t9903-bash-prompt.sh?h=v${version}" &&
+git commit -q -a -s -m "Update to upstream v${version}" &&
+git checkout -q - &&
+git stash pop -q &&
+echo "Updated to v${version}"
