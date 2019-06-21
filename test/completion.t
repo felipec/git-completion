@@ -1497,9 +1497,9 @@ test_expect_success 'git --help completion' '
 	test_completion "git --help core" "core-tutorial "
 '
 
-test_expect_failure 'completion.commands removes multiple commands' '
+test_expect_success 'completion.commands removes multiple commands' '
 	offgit &&
-	test_config completion.commands "-cherry -mergetool" &&
+	test_config_global completion.commands "-cherry -mergetool" &&
 	git --list-cmds=list-mainporcelain,list-complete,config >out &&
 	! grep -E "^(cherry|mergetool)$" out
 '
@@ -1637,7 +1637,7 @@ test_expect_success 'complete files' '
 '
 
 test_expect_success "completion uses <cmd> completion for alias: !sh -c 'git <cmd> ...'" '
-	test_config alias.co "!sh -c '"'"'git checkout ...'"'"'" &&
+	test_config_global alias.co "!sh -c '"'"'git checkout ...'"'"'" &&
 	test_completion "git co m" <<-\EOF
 	master Z
 	mybranch Z
@@ -1646,7 +1646,7 @@ test_expect_success "completion uses <cmd> completion for alias: !sh -c 'git <cm
 '
 
 test_expect_success 'completion uses <cmd> completion for alias: !f () { VAR=val git <cmd> ... }' '
-	test_config alias.co "!f () { VAR=val git checkout ... ; } f" &&
+	test_config_global alias.co "!f () { VAR=val git checkout ... ; } f" &&
 	test_completion "git co m" <<-\EOF
 	master Z
 	mybranch Z
@@ -1655,7 +1655,7 @@ test_expect_success 'completion uses <cmd> completion for alias: !f () { VAR=val
 '
 
 test_expect_success 'completion used <cmd> completion for alias: !f() { : git <cmd> ; ... }' '
-	test_config alias.co "!f() { : git checkout ; if ... } f" &&
+	test_config_global alias.co "!f() { : git checkout ; if ... } f" &&
 	test_completion "git co m" <<-\EOF
 	master Z
 	mybranch Z
