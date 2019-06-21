@@ -2076,7 +2076,7 @@ test_expect_success 'git --help completion' '
 test_expect_success 'completion.commands removes multiple commands' '
 	offgit &&
 	test_config_global completion.commands "-cherry -mergetool" &&
-	git --list-cmds=list-mainporcelain,list-complete,config >out &&
+	__git --list-cmds=list-mainporcelain,list-complete,config >out &&
 	! grep -E "^(cherry|mergetool)$" out
 '
 

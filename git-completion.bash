@@ -3611,6 +3611,43 @@ __git_complete ()
 		|| complete -o default -o nospace -F $wrapper $1
 }
 
+if ! git --list-cmds=main >/dev/null 2>&1; then
+
+	declare -A __git_cmds
+	__git_cmds[list-complete]="apply blame cherry config difftool fsck help instaweb mergetool prune reflog remote repack replace request-pull send-email show-branch stage whatchanged"
+	__git_cmds[list-guide]="attributes cli core-tutorial credentials cvs-migration diffcore everyday faq glossary hooks ignore modules namespaces remote-helpers repository-layout revisions submodules tutorial-2 tutorial workflows"
+	__git_cmds[list-mainporcelain]="add am archive bisect branch bundle checkout cherry-pick citool clean clone commit describe diff fetch format-patch gc grep gui init gitk log maintenance merge mv notes pull push range-diff rebase reset restore revert rm shortlog show sparse-checkout stash status submodule switch tag worktree"
+	__git_cmds[main]="add add--interactive am annotate apply archimport archive bisect bisect--helper blame branch bugreport bundle cat-file check-attr check-ignore check-mailmap check-ref-format checkout checkout-index cherry cherry-pick citool clean clone column commit commit-graph commit-tree config count-objects credential credential-cache credential-cache--daemon credential-gnome-keyring credential-libsecret credential-store cvsexportcommit cvsimport cvsserver daemon describe diff diff-files diff-index diff-tree difftool difftool--helper env--helper fast-export fast-import fetch fetch-pack filter-branch fmt-merge-msg for-each-ref for-each-repo format-patch fsck fsck-objects gc get-tar-commit-id grep gui gui--askpass hash-object help http-backend http-fetch http-push imap-send index-pack init init-db instaweb interpret-trailers log ls-files ls-remote ls-tree mailinfo mailsplit maintenance merge merge-base merge-file merge-index merge-octopus merge-one-file merge-ours merge-recursive merge-recursive-ours merge-recursive-theirs merge-resolve merge-subtree merge-tree mergetool mktag mktree multi-pack-index mv mw name-rev notes p4 pack-objects pack-redundant pack-refs patch-id pickaxe prune prune-packed pull push quiltimport range-diff read-tree rebase rebase--interactive receive-pack reflog remote remote-ext remote-fd remote-ftp remote-ftps remote-http remote-https remote-mediawiki repack replace request-pull rerere reset restore rev-list rev-parse revert rm send-email send-pack sh-i18n--envsubst shell shortlog show show-branch show-index show-ref sparse-checkout stage stash status stripspace submodule submodule--helper subtree svn switch symbolic-ref tag unpack-file unpack-objects update-index update-ref update-server-info upload-archive upload-archive--writer upload-pack var verify-commit verify-pack verify-tag version web--browse whatchanged worktree write-tree"
+	__git_cmds[others]="clang-format"
+	__git_cmds[parseopt]="add am apply archive bisect--helper blame branch bugreport cat-file check-attr check-ignore check-mailmap checkout checkout-index cherry cherry-pick clean clone column commit commit-graph config count-objects credential-cache credential-cache--daemon credential-store describe difftool env--helper fast-export fetch fmt-merge-msg for-each-ref for-each-repo format-patch fsck fsck-objects gc grep hash-object help init init-db interpret-trailers log ls-files ls-remote ls-tree merge merge-base merge-file mktree multi-pack-index mv name-rev notes pack-objects pack-refs pickaxe prune prune-packed pull push range-diff read-tree rebase rebase--interactive receive-pack reflog remote repack replace rerere reset restore revert rm send-pack shortlog show show-branch show-index show-ref sparse-checkout stage stash status stripspace switch symbolic-ref tag update-index update-ref update-server-info upload-pack verify-commit verify-pack verify-tag version whatchanged write-tree "
+
+	# Override __git
+	__git ()
+	{
+		case "$1" in
+		--list-cmds=*)
+			while read -r -d ',' x; do
+				case "$x" in
+				nohelpers)
+					;;
+				alias)
+					;;
+				config)
+					;;
+				*)
+					echo ${__git_cmds[$x]}
+					;;
+				esac
+			done <<< "${1##--list-cmds=},"
+			return
+			;;
+		esac
+		git ${__git_C_args:+"${__git_C_args[@]}"} \
+			${__git_dir:+--git-dir="$__git_dir"} "$@" 2>/dev/null
+	}
+
+fi
+
 __git_complete git __git_main
 __git_complete gitk __gitk_main
 
