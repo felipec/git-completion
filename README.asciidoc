@@ -1,0 +1,63 @@
+This project is a friendly fork of the official Git completion
+(`contrib/completion`) and prompt scripts for Bash, Zsh, and possibly other
+shells.
+
+It's meant to be used independently of the current version of Git. Currently
+the scripts under `contrib` are tied to the specific Git version, for example
+the completion scripts of version v2.22
+(https://git.kernel.org/pub/scm/git/git.git/plain/contrib/completion/git-completion.bash?h=v2.22.0[git-completion.bash])
+don't work with older versions of Git (e.g. v2.16); the ones in
+`git-completion` do.
+
+Plus, many of the patches I've sent to the mailing list have been ignored, so
+they are here too.
+
+This is a sister project of the
+https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#gitfast[oh-my-zsh
+gitfast] plugin (which I also maintain).
+
+== Installation ==
+
+Simply run `make install`, then, depending on your shell:
+
+=== Bash ===
+==== Completion ====
+
+If you are using bash-completion you don't have to do anything else, but if
+not; you simply need to source this file in your `~/.bashrc`:
+
+  source ~/.local/share/bash-completion/completions/git
+
+==== Prompt ====
+
+Change your PS1 (e.g. in `~/.bashrc`) to something that includes
+`$(__git_ps1)`, for example:
+
+  PS1='\h \w$(__git_ps1 "[%s]") \$ '
+
+If you want to use colors, or a faster prompt, you need to use the
+`PROMPT_COMMAND` mode instead:
+
+  GIT_PS1_SHOWCOLORHINTS=1
+  PROMPT_COMMAND='__git_ps1 "\h \w" " \\\$ " "[%s]"'
+
+In this mode the `__git_ps1` function will override the PS1 variable each time
+you are in a prompt.
+
+=== Zsh ===
+==== Completion ====
+
+Edit `~/.zshrc` and add the following:
+
+  fpath=(~/.local/share/git-completion/zsh $fpath)
+
+==== Prompt ====
+
+You need to add `$(__git_ps1)` to your PS1, for exmple in `~/.zshrc`:
+
+  setopt PROMPT_SUBST
+  PS1='%m %~$(__git_ps1 "[%s]") %# '
+
+If you want colors, simply add:
+
+  GIT_PS1_SHOWCOLORHINTS=1
