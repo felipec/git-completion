@@ -1497,7 +1497,7 @@ test_expect_success 'git --help completion' '
 	test_completion "git --help core" "core-tutorial "
 '
 
-test_expect_success 'completion.commands removes multiple commands' '
+test_expect_unstable 'completion.commands removes multiple commands' '
 	offgit &&
 	test_config_global completion.commands "-cherry -mergetool" &&
 	__git --list-cmds=list-mainporcelain,list-complete,config >out &&
