@@ -1,4 +1,9 @@
 language: sh
+dist: xenial
+
+branches:
+  only:
+  - master
 
 script:
   - make test
