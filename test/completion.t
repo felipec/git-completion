@@ -33,7 +33,7 @@ complete ()
 GIT_TESTING_ALL_COMMAND_LIST='add checkout check-attr filter-branch ls-files'
 GIT_TESTING_PORCELAIN_COMMAND_LIST='add checkout filter-branch'
 
-. "$GIT_BUILD_DIR/contrib/completion/git-completion.bash"
+. "$SRC_DIR/git-completion.bash"
 
 # We don't need this function to actually join words or do anything special.
 # Also, it's cleaner to avoid touching bash's internal completion variables.
@@ -1701,7 +1701,7 @@ done
 test_expect_success 'sourcing the completion script clears cached commands' '
 	__git_compute_all_commands &&
 	verbose test -n "$__git_all_commands" &&
-	. "$GIT_BUILD_DIR/contrib/completion/git-completion.bash" &&
+	. "$SRC_DIR/git-completion.bash" &&
 	verbose test -z "$__git_all_commands"
 '
 
@@ -1709,7 +1709,7 @@ test_expect_success 'sourcing the completion script clears cached merge strategi
 	GIT_TEST_GETTEXT_POISON= &&
 	__git_compute_merge_strategies &&
 	verbose test -n "$__git_merge_strategies" &&
-	. "$GIT_BUILD_DIR/contrib/completion/git-completion.bash" &&
+	. "$SRC_DIR/git-completion.bash" &&
 	verbose test -z "$__git_merge_strategies"
 '
 
@@ -1718,7 +1718,7 @@ test_expect_success 'sourcing the completion script clears cached --options' '
 	verbose test -n "$__gitcomp_builtin_checkout" &&
 	__gitcomp_builtin notes_edit &&
 	verbose test -n "$__gitcomp_builtin_notes_edit" &&
-	. "$GIT_BUILD_DIR/contrib/completion/git-completion.bash" &&
+	. "$SRC_DIR/git-completion.bash" &&
 	verbose test -z "$__gitcomp_builtin_checkout" &&
 	verbose test -z "$__gitcomp_builtin_notes_edit"
 '
