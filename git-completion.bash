@@ -3649,6 +3649,43 @@ __git_complete ()
 	___git_complete $1 $func
 }
 
+if ! git --list-cmds=main >/dev/null 2>&1; then
+
+	declare -A __git_cmds
+	__git_cmds[list-complete]="apply blame cherry config difftool fsck help instaweb mergetool prune reflog remote repack replace request-pull send-email show-branch stage whatchanged"
+	__git_cmds[list-guide]="core-tutorial credentials cvs-migration diffcore everyday faq glossary namespaces remote-helpers submodules tutorial tutorial-2 workflows"
+	__git_cmds[list-mainporcelain]="add am archive bisect branch bundle checkout cherry-pick citool clean clone commit describe diff fetch format-patch gc grep gui init log maintenance merge mv notes pull push range-diff rebase reset restore revert rm shortlog show sparse-checkout stash status submodule switch tag worktree gitk scalar"
+	__git_cmds[main]="add am annotate apply archimport archive bisect blame branch bugreport bundle cat-file check-attr check-ignore check-mailmap check-ref-format checkout checkout-index cherry cherry-pick citool clean clone column commit commit-graph commit-tree config count-objects credential credential-cache credential-store cvsexportcommit cvsimport cvsserver daemon describe diagnose diff diff-files diff-index diff-tree difftool fast-export fast-import fetch fetch-pack filter-branch fmt-merge-msg for-each-ref for-each-repo format-patch fsck fsck-objects gc get-tar-commit-id grep gui hash-object help hook http-backend http-fetch http-push imap-send index-pack init init-db instaweb interpret-trailers log ls-files ls-remote ls-tree mailinfo mailsplit maintenance merge merge-base merge-file merge-index merge-octopus merge-one-file merge-ours merge-recursive merge-recursive-ours merge-recursive-theirs merge-resolve merge-subtree merge-tree mergetool mktag mktree multi-pack-index mv name-rev notes p4 pack-objects pack-redundant pack-refs patch-id pickaxe prune prune-packed pull push quiltimport range-diff read-tree rebase receive-pack reflog remote remote-ext remote-fd remote-ftp remote-ftps remote-http remote-https repack replace request-pull rerere reset restore rev-list rev-parse revert rm send-email send-pack shell shortlog show show-branch show-index show-ref sparse-checkout stage stash status stripspace submodule svn switch symbolic-ref tag unpack-file unpack-objects update-index update-ref update-server-info upload-archive upload-pack var verify-commit verify-pack verify-tag version whatchanged worktree write-tree"
+	__git_cmds[others]=""
+	__git_cmds[parseopt]="add am annotate apply archive bisect blame branch bugreport bundle cat-file check-attr check-ignore check-mailmap checkout checkout-index cherry cherry-pick clean clone column commit commit-graph commit-tree config count-objects credential-cache credential-store describe diagnose difftool fast-export fetch fmt-merge-msg for-each-ref for-each-repo format-patch fsck fsck-objects gc grep hash-object help hook init init-db interpret-trailers log ls-files ls-remote ls-tree mailinfo maintenance merge merge-base merge-file merge-tree mktag mktree multi-pack-index mv name-rev notes pack-objects pack-refs pickaxe prune prune-packed pull push range-diff read-tree rebase receive-pack reflog remote repack replace rerere reset restore revert rm send-pack shortlog show show-branch show-index show-ref sparse-checkout stage stash status stripspace switch symbolic-ref tag update-index update-ref update-server-info upload-pack verify-commit verify-pack verify-tag version whatchanged worktree write-tree"
+
+	# Override __git
+	__git ()
+	{
+		case "$1" in
+		--list-cmds=*)
+			while read -r -d ',' x; do
+				case "$x" in
+				nohelpers)
+					;;
+				alias)
+					;;
+				config)
+					;;
+				*)
+					echo ${__git_cmds[$x]}
+					;;
+				esac
+			done <<< "${1##--list-cmds=},"
+			return
+			;;
+		esac
+		git ${__git_C_args:+"${__git_C_args[@]}"} \
+			${__git_dir:+--git-dir="$__git_dir"} "$@" 2>/dev/null
+	}
+
+fi
+
 ___git_complete git __git_main
 ___git_complete gitk __gitk_main
 
