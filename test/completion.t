@@ -1949,7 +1949,7 @@ test_expect_success 'double dash "git" itself' '
 	EOF
 '
 
-test_expect_failure 'double dash "git checkout"' '
+test_expect_success 'double dash "git checkout"' '
 	offgit &&
 	test_completion "git checkout --" <<-\EOF
 	--quiet Z
@@ -2084,7 +2084,7 @@ test_expect_success 'complete tree filename with metacharacters' '
 	EOF
 '
 
-test_expect_failure PERL 'send-email' '
+test_expect_success PERL 'send-email' '
 	test_completion "git send-email ma" "master " &&
 	offgit &&
 	test_completion "git send-email --cov" <<-\EOF
