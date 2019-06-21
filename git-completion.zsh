@@ -4,23 +4,19 @@
 #
 # Copyright (c) 2012-2013 Felipe Contreras <felipe.contreras@gmail.com>
 #
-# You need git's bash completion script installed somewhere, by default it
-# would be the location bash-completion uses.
-#
-# If your script is somewhere else, you can configure it on your ~/.zshrc:
-#
-#  zstyle ':completion:*:*:git:*' script ~/.git-completion.zsh
-#
 # The recommended way to install this script is to copy to '~/.zsh/_git', and
 # then add the following to your ~/.zshrc file:
 #
 #  fpath=(~/.zsh $fpath)
-
-complete ()
-{
-	# do nothing
-	return 0
-}
+#
+# You need git's bash completion script installed. By default it will use
+# bash-completion's script.
+#
+# If your bash completion script is somewhere else, you can configure it on
+# your ~/.zshrc:
+#
+#  zstyle ':completion:*:*:git:*' script ~/.git-completion.bash
+#
 
 zstyle -T ':completion:*:*:git:*' tag-order && \
 	zstyle ':completion:*:*:git:*' tag-order 'common-commands'
@@ -30,10 +26,11 @@ if [ -z "$script" ]; then
 	local -a locations
 	local e
 	locations=(
-		$(dirname ${funcsourcetrace[1]%:*})/git-completion.bash
-		'/etc/bash_completion.d/git' # fedora, old debian
-		'/usr/share/bash-completion/completions/git' # arch, ubuntu, new debian
-		'/usr/share/bash-completion/git' # gentoo
+		"$(dirname ${funcsourcetrace[1]%:*})"/git-completion.bash
+		"$HOME/.local/share/bash-completion/completions/git"
+		"$(pkg-config --variable=completionsdir bash-completion)"/git
+		'/usr/share/bash-completion/completions/git'
+		'/etc/bash_completion.d/git' # old debian
 		)
 	for e in $locations; do
 		test -f $e && script="$e" && break
@@ -71,44 +68,38 @@ __gitcomp_direct ()
 {
 	emulate -L zsh
 
-	local IFS=$'\n'
 	compset -P '*[=:]'
-	compadd -Q -- ${=1} && _ret=0
+	compadd -Q -- ${${(f)1}% } && _ret=0
 }
 
 __gitcomp_nl ()
 {
 	emulate -L zsh
 
-	local IFS=$'\n'
 	compset -P '*[=:]'
-	compadd -Q -S "${4- }" -p "${2-}" -- ${=1} && _ret=0
+	compadd -Q -S "${4- }" -p "${2-}" -- ${(f)1} && _ret=0
 }
 
 __gitcomp_nl_append ()
 {
 	emulate -L zsh
 
-	local IFS=$'\n'
-	compadd -Q -S "${4- }" -p "${2-}" -- ${=1} && _ret=0
+	compset -P '*[=:]'
+	compadd -Q -S "${4- }" -p "${2-}" -- ${(f)1} && _ret=0
 }
 
 __gitcomp_file_direct ()
 {
 	emulate -L zsh
 
-	local IFS=$'\n'
-	compset -P '*[=:]'
-	compadd -f -- ${=1} && _ret=0
+	compadd -f -- ${(f)1} && _ret=0
 }
 
 __gitcomp_file ()
 {
 	emulate -L zsh
 
-	local IFS=$'\n'
-	compset -P '*[=:]'
-	compadd -p "${2-}" -f -- ${=1} && _ret=0
+	compadd -f -p "${2-}" -- ${(f)1} && _ret=0
 }
 
 __git_zsh_bash_func ()
@@ -232,8 +223,10 @@ _git ()
 
 	if (( $+functions[__${service}_zsh_main] )); then
 		__${service}_zsh_main
-	else
+	elif (( $+functions[__${service}_main] )); then
 		emulate ksh -c __${service}_main
+	elif (( $+functions[_${service}] )); then
+		emulate ksh -c _${service}
 	fi
 
 	let _ret && _default && _ret=0
