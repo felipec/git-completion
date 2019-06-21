@@ -122,6 +122,15 @@ test_gitcomp_nl ()
 	test_cmp expected out
 }
 
+offgit ()
+{
+	GIT_CEILING_DIRECTORIES="$ROOT" &&
+	export GIT_CEILING_DIRECTORIES &&
+	test_when_finished "ROOT='$ROOT'; cd '$TRASH_DIRECTORY'; unset GIT_CEILING_DIRECTORIES" &&
+	ROOT="$ROOT"/non-repo &&
+	cd "$ROOT"
+}
+
 invalid_variable_name='${foo.bar}'
 
 actual="$TRASH_DIRECTORY/actual"
@@ -358,10 +367,8 @@ test_expect_success SYMLINKS '__git_find_repo_path - resulting path avoids symli
 '
 
 test_expect_success '__git_find_repo_path - not a git repository' '
+	offgit &&
 	(
-		cd non-repo &&
-		GIT_CEILING_DIRECTORIES="$ROOT" &&
-		export GIT_CEILING_DIRECTORIES &&
 		test_must_fail __git_find_repo_path &&
 		printf "$__git_repo_path" >"$actual"
 	) &&
@@ -1909,6 +1916,7 @@ test_expect_success '__git_pretty_aliases' '
 '
 
 test_expect_success 'basic' '
+	offgit &&
 	run_completion "git " &&
 	# built-in
 	grep -q "^add \$" out &&
@@ -1922,6 +1930,7 @@ test_expect_success 'basic' '
 '
 
 test_expect_success 'double dash "git" itself' '
+	offgit &&
 	test_completion "git --" <<-\EOF
 	--paginate Z
 	--no-pager Z
@@ -1940,7 +1949,8 @@ test_expect_success 'double dash "git" itself' '
 	EOF
 '
 
-test_expect_success 'double dash "git checkout"' '
+test_expect_failure 'double dash "git checkout"' '
+	offgit &&
 	test_completion "git checkout --" <<-\EOF
 	--quiet Z
 	--detach Z
@@ -1965,6 +1975,7 @@ test_expect_success 'double dash "git checkout"' '
 '
 
 test_expect_success 'general options' '
+	offgit &&
 	test_completion "git --ver" "--version " &&
 	test_completion "git --hel" "--help " &&
 	test_completion "git --exe" <<-\EOF &&
@@ -1983,6 +1994,7 @@ test_expect_success 'general options' '
 '
 
 test_expect_success 'general options plus command' '
+	offgit &&
 	test_completion "git --version check" "checkout " &&
 	test_completion "git --paginate check" "checkout " &&
 	test_completion "git --git-dir=foo check" "checkout " &&
@@ -2003,11 +2015,13 @@ test_expect_success 'general options plus command' '
 '
 
 test_expect_success 'git --help completion' '
+	offgit &&
 	test_completion "git --help ad" "add " &&
 	test_completion "git --help core" "core-tutorial "
 '
 
-test_expect_success 'completion.commands removes multiple commands' '
+test_expect_failure 'completion.commands removes multiple commands' '
+	offgit &&
 	test_config completion.commands "-cherry -mergetool" &&
 	git --list-cmds=list-mainporcelain,list-complete,config >out &&
 	! grep -E "^(cherry|mergetool)$" out
@@ -2070,12 +2084,13 @@ test_expect_success 'complete tree filename with metacharacters' '
 	EOF
 '
 
-test_expect_success PERL 'send-email' '
-	test_completion "git send-email --cov" <<-\EOF &&
+test_expect_failure PERL 'send-email' '
+	test_completion "git send-email ma" "master " &&
+	offgit &&
+	test_completion "git send-email --cov" <<-\EOF
 	--cover-from-description=Z
 	--cover-letter Z
 	EOF
-	test_completion "git send-email ma" "master "
 '
 
 test_expect_success 'complete files' '
@@ -2180,6 +2195,7 @@ test_expect_success 'completion used <cmd> completion for alias: !f() { : git <c
 '
 
 test_expect_success 'completion without explicit _git_xxx function' '
+	offgit &&
 	test_completion "git version --" <<-\EOF
 	--build-options Z
 	--no-build-options Z
@@ -2300,13 +2316,15 @@ test_expect_success 'git clone --config= - value' '
 '
 
 test_expect_success 'sourcing the completion script clears cached commands' '
+	offgit &&
 	__git_compute_all_commands &&
 	verbose test -n "$__git_all_commands" &&
 	. "$GIT_BUILD_DIR/contrib/completion/git-completion.bash" &&
 	verbose test -z "$__git_all_commands"
 '
 
-test_expect_success 'sourcing the completion script clears cached merge strategies' '
+test_expect_failure 'sourcing the completion script clears cached merge strategies' '
+	offgit &&
 	GIT_TEST_GETTEXT_POISON=false &&
 	__git_compute_merge_strategies &&
 	verbose test -n "$__git_merge_strategies" &&
@@ -2314,7 +2332,8 @@ test_expect_success 'sourcing the completion script clears cached merge strategi
 	verbose test -z "$__git_merge_strategies"
 '
 
-test_expect_success 'sourcing the completion script clears cached --options' '
+test_expect_failure 'sourcing the completion script clears cached --options' '
+	offgit &&
 	__gitcomp_builtin checkout &&
 	verbose test -n "$__gitcomp_builtin_checkout" &&
 	__gitcomp_builtin notes_edit &&
