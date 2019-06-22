@@ -2,7 +2,7 @@
 
 # zsh completion wrapper for git
 #
-# Copyright (c) 2012-2013 Felipe Contreras <felipe.contreras@gmail.com>
+# Copyright (c) 2012-2019 Felipe Contreras <felipe.contreras@gmail.com>
 #
 # The recommended way to install this script is to copy to '~/.zsh/_git', and
 # then add the following to your ~/.zshrc file:
