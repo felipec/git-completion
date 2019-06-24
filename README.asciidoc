@@ -94,6 +94,7 @@ You can use Zsh's `compdef`:
 
 This is a short list of the benefits you get:
 
+* Easier installation
 * Zsh: doesn't add extra spaces
 * Zsh: colors work without PC
 * Zsh: custom functions can be configured
