@@ -89,3 +89,15 @@ You have to use the internal `__git_complete` function:
 You can use Zsh's `compdef`:
 
   compdef _git glm=git_log
+
+== Improvements from upstream ==
+
+This is a short list of the benefits you get:
+
+* Zsh: doesn't add extra spaces
+* Zsh: colors work without PC
+* Zsh: custom functions can be configured
+* Zsh: don't mess with bashcomp
+* Zsh: other cosmetic improvements
+* Bash: works in older versions of Git
+* Bash: works outside of a Git repository
