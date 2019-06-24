@@ -2,19 +2,25 @@ This project is a friendly fork of the official Git completion
 (`contrib/completion`) and prompt scripts for Bash, Zsh, and possibly other
 shells.
 
-It's meant to be used independently of the current version of Git. Currently
-the scripts under `contrib` are tied to the specific Git version, for example
+Most Git developers use the Bash shell, for which the completion scripts work
+rather well, however, Zsh is typically neglected. I've sent many patches to fix
+the issues, many have been merged, but in the last years all my patches have
+been ignored, thus the need for a canonical location of a good, working Zsh
+completion.
+
+There are advantages for Bash users too. Currently the scripts under `contrib`
+are tied to the specific Git version, for example
 the completion scripts of version v2.22
 (https://git.kernel.org/pub/scm/git/git.git/plain/contrib/completion/git-completion.bash?h=v2.22.0[git-completion.bash])
 don't work with older versions of Git (e.g. v2.16); the ones in
-`git-completion` do.
+this project do.
 
-Plus, many of the patches I've sent to the mailing list have been ignored, so
-they are here too.
+With `git-completion` you can be sure you are using the latest completion that
+works in both shells, and any Git version.
 
 This is a sister project of the
 https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#gitfast[oh-my-zsh
-gitfast] plugin (which I also maintain).
+gitfast] plugin (that I also maintain), which has similar needs.
 
 == Installation ==
 
