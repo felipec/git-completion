@@ -2,7 +2,7 @@
 
 # zsh completion wrapper for git
 #
-# Copyright (c) 2012-2013 Felipe Contreras <felipe.contreras@gmail.com>
+# Copyright (c) 2012-2019 Felipe Contreras <felipe.contreras@gmail.com>
 #
 # The recommended way to install this script is to copy to '~/.zsh/_git', and
 # then add the following to your ~/.zshrc file:
@@ -69,7 +69,7 @@ __gitcomp_direct ()
 	emulate -L zsh
 
 	compset -P '*[=:]'
-	compadd -Q -- ${${(f)1}% } && _ret=0
+	compadd -Q -S '' -- ${(f)1} && _ret=0
 }
 
 __gitcomp_nl ()
@@ -102,20 +102,31 @@ __gitcomp_file ()
 	compadd -f -p "${2-}" -- ${(f)1} && _ret=0
 }
 
+__git_complete_command () {
+	emulate -L zsh
+
+	local command="$1"
+	local completion_func="_git_${command//-/_}"
+	if (( $+functions[$completion_func] )); then
+		emulate ksh -c $completion_func
+		return 0
+	else
+		return 1
+	fi
+}
+
 __git_zsh_bash_func ()
 {
 	emulate -L ksh
 
 	local command=$1
 
-	local completion_func="_git_${command//-/_}"
-	declare -f $completion_func >/dev/null && $completion_func && return
+	__git_complete_command "$command" && return
 
 	local expansion=$(__git_aliased_command "$command")
 	if [ -n "$expansion" ]; then
 		words[1]=$expansion
-		completion_func="_git_${expansion//-/_}"
-		declare -f $completion_func >/dev/null && $completion_func
+		__git_complete_command "$expansion"
 	fi
 }
 
@@ -150,8 +161,9 @@ __git_zsh_cmd_common ()
 __git_zsh_cmd_alias ()
 {
 	local -a list
-	list=(${${${(0)"$(git config -z --get-regexp '^alias\.')"}#alias.}%$'\n'*})
-	_describe -t alias-commands 'aliases' list $* && _ret=0
+	list=(${${(0)"$(git config -z --get-regexp '^alias\.*')"}#alias.})
+	list=(${(f)"$(printf "%s:alias for '%s'\n" ${(f@)list})"})
+	_describe -t alias-commands 'aliases' list && _ret=0
 }
 
 __git_zsh_cmd_all ()
@@ -189,10 +201,13 @@ __git_zsh_main ()
 
 	case $state in
 	(command)
-		_alternative \
-                         'alias-commands:alias:__git_zsh_cmd_alias' \
-                         'common-commands:common:__git_zsh_cmd_common' \
-                         'all-commands:all:__git_zsh_cmd_all' && _ret=0
+		_tags common-commands alias-commands all-commands
+		while _tags; do
+			_requested common-commands && __git_zsh_cmd_common
+			_requested alias-commands && __git_zsh_cmd_alias
+			_requested all-commands && __git_zsh_cmd_all
+			let _ret || break
+		done
 		;;
 	(arg)
 		local command="${words[1]}" __git_dir
