@@ -67,3 +67,25 @@ You need to add `$(__git_ps1)` to your PS1, for exmple in `~/.zshrc`:
 If you want colors, simply add:
 
   GIT_PS1_SHOWCOLORHINTS=1
+
+== Configuration ==
+
+By default aliases and custom commands are automatically handled, but you might
+have custom functions, for example:
+
+  glm() { git log ^master ${@:-HEAD} ; }
+
+There's no way for the completion to do the sensible thing here, unless you
+manually configure it:
+
+=== Bash ===
+
+You have to use the internal `__git_complete` function:
+
+  __git_complete glm _git_log
+
+=== Zsh ===
+
+You can use Zsh's `compdef`:
+
+  compdef _git glm=git_log
