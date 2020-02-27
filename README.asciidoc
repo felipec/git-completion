@@ -36,6 +36,10 @@ not; you simply need to source this file in your `~/.bashrc`:
 
 ==== Prompt ====
 
+Source the prompt file in your `~/.bashrc`:
+
+  source ~/.local/share/git-completion/prompt.sh
+
 Change your PS1 (e.g. in `~/.bashrc`) to something that includes
 `$(__git_ps1)`, for example:
 
@@ -58,6 +62,10 @@ Edit `~/.zshrc` and add the following:
   fpath=(~/.local/share/git-completion/zsh $fpath)
 
 ==== Prompt ====
+
+Source the prompt file in your `~/.zshrc`:
+
+  source ~/.local/share/git-completion/prompt.sh
 
 You need to add `$(__git_ps1)` to your PS1, for exmple in `~/.zshrc`:
 
