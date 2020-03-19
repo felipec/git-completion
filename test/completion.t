@@ -28,10 +28,10 @@ complete ()
 #
 # (2) A test makes sure that common subcommands are included in the
 #     completion for "git <TAB>", and a plumbing is excluded.  "add",
-#     "filter-branch" and "ls-files" are listed for this.
+#     "rebase" and "ls-files" are listed for this.
 
-GIT_TESTING_ALL_COMMAND_LIST='add checkout check-attr filter-branch ls-files'
-GIT_TESTING_PORCELAIN_COMMAND_LIST='add checkout filter-branch'
+GIT_TESTING_ALL_COMMAND_LIST='add checkout check-attr rebase ls-files'
+GIT_TESTING_PORCELAIN_COMMAND_LIST='add checkout rebase'
 
 . "$GIT_BUILD_DIR/contrib/completion/git-completion.bash"
 
@@ -378,7 +378,7 @@ test_expect_success '__gitdir - finds repo' '
 '
 
 
-test_expect_success '__gitdir - returns error when cant find repo' '
+test_expect_success '__gitdir - returns error when cannot find repo' '
 	(
 		__git_dir="non-existing" &&
 		test_must_fail __gitdir >"$actual"
@@ -945,7 +945,7 @@ test_expect_success 'setup for filtering matching refs' '
 	rm -f .git/FETCH_HEAD
 '
 
-test_expect_success '__git_refs - dont filter refs unless told so' '
+test_expect_success '__git_refs - do not filter refs unless told so' '
 	cat >expected <<-EOF &&
 	HEAD
 	master
@@ -1257,7 +1257,7 @@ test_path_completion ()
 		# In the following tests calling this function we only
 		# care about how __git_complete_index_file() deals with
 		# unusual characters in path names.  By requesting only
-		# untracked files we dont have to bother adding any
+		# untracked files we do not have to bother adding any
 		# paths to the index in those tests.
 		__git_complete_index_file --others &&
 		print_comp
@@ -1392,12 +1392,12 @@ test_expect_success 'basic' '
 	# built-in
 	grep -q "^add \$" out &&
 	# script
-	grep -q "^filter-branch \$" out &&
+	grep -q "^rebase \$" out &&
 	# plumbing
 	! grep -q "^ls-files \$" out &&
 
-	run_completion "git f" &&
-	! grep -q -v "^f" out
+	run_completion "git r" &&
+	! grep -q -v "^r" out
 '
 
 test_expect_success 'double dash "git" itself' '
@@ -1438,6 +1438,8 @@ test_expect_success 'double dash "git checkout"' '
 	--no-guess Z
 	--no-... Z
 	--overlay Z
+	--pathspec-file-nul Z
+	--pathspec-from-file=Z
 	EOF
 '
 
@@ -1548,7 +1550,10 @@ test_expect_success 'complete tree filename with metacharacters' '
 '
 
 test_expect_success PERL 'send-email' '
-	test_completion "git send-email --cov" "--cover-letter " &&
+	test_completion "git send-email --cov" <<-\EOF &&
+	--cover-from-description=Z
+	--cover-letter Z
+	EOF
 	test_completion "git send-email ma" "master "
 '
 
@@ -1698,6 +1703,69 @@ do
 	'
 done
 
+test_expect_success 'git config - section' '
+	test_completion "git config br" <<-\EOF
+	branch.Z
+	browser.Z
+	EOF
+'
+
+test_expect_success 'git config - variable name' '
+	test_completion "git config log.d" <<-\EOF
+	log.date Z
+	log.decorate Z
+	EOF
+'
+
+test_expect_success 'git config - value' '
+	test_completion "git config color.pager " <<-\EOF
+	false Z
+	true Z
+	EOF
+'
+
+test_expect_success 'git -c - section' '
+	test_completion "git -c br" <<-\EOF
+	branch.Z
+	browser.Z
+	EOF
+'
+
+test_expect_success 'git -c - variable name' '
+	test_completion "git -c log.d" <<-\EOF
+	log.date=Z
+	log.decorate=Z
+	EOF
+'
+
+test_expect_success 'git -c - value' '
+	test_completion "git -c color.pager=" <<-\EOF
+	false Z
+	true Z
+	EOF
+'
+
+test_expect_success 'git clone --config= - section' '
+	test_completion "git clone --config=br" <<-\EOF
+	branch.Z
+	browser.Z
+	EOF
+'
+
+test_expect_success 'git clone --config= - variable name' '
+	test_completion "git clone --config=log.d" <<-\EOF
+	log.date=Z
+	log.decorate=Z
+	EOF
+'
+
+test_expect_success 'git clone --config= - value' '
+	test_completion "git clone --config=color.pager=" <<-\EOF
+	false Z
+	true Z
+	EOF
+'
+
 test_expect_success 'sourcing the completion script clears cached commands' '
 	__git_compute_all_commands &&
 	verbose test -n "$__git_all_commands" &&
@@ -1706,7 +1774,7 @@ test_expect_success 'sourcing the completion script clears cached commands' '
 '
 
 test_expect_success 'sourcing the completion script clears cached merge strategies' '
-	GIT_TEST_GETTEXT_POISON= &&
+	GIT_TEST_GETTEXT_POISON=false &&
 	__git_compute_merge_strategies &&
 	verbose test -n "$__git_merge_strategies" &&
 	. "$GIT_BUILD_DIR/contrib/completion/git-completion.bash" &&
