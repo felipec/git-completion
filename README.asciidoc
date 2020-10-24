@@ -109,7 +109,8 @@ This is a short list of the benefits you get:
 * Easier installation
 * Zsh: doesn't add extra spaces
 * Zsh: colors work without PC
-* Zsh: custom functions can be configured
+* Zsh: custom aliases can be configured
+* Zsh: fixed many --options and --no-options
 * Zsh: don't mess with bashcomp
 * Zsh: other cosmetic improvements
 * Bash: works in older versions of Git
