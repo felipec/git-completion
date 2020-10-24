@@ -127,6 +127,11 @@ __gitcomp_file ()
 	compadd -f -p "${2-}" -- ${(f)1} && _ret=0
 }
 
+_git_zsh ()
+{
+	__gitcomp "v1.0-rc"
+}
+
 __git_complete_command ()
 {
 	emulate -L zsh
