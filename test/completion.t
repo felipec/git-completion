@@ -2011,7 +2011,7 @@ test_expect_success 'git --help completion' '
 	test_completion "git --help core" "core-tutorial "
 '
 
-test_expect_unstable 'completion.commands removes multiple commands' '
+test_expect_success 'completion.commands removes multiple commands' '
 	offgit &&
 	test_config_global completion.commands "-cherry -mergetool" &&
 	__git --list-cmds=list-mainporcelain,list-complete,config >out &&
@@ -2316,7 +2316,7 @@ test_expect_success 'sourcing the completion script clears cached merge strategi
 	verbose test -z "$__git_merge_strategies"
 '
 
-test_expect_success 'sourcing the completion script clears cached --options' '
+test_expect_failure 'sourcing the completion script clears cached --options' '
 	offgit &&
 	__gitcomp_builtin checkout &&
 	verbose test -n "$__gitcomp_builtin_checkout" &&
