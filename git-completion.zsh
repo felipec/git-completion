@@ -2,18 +2,21 @@
 
 # zsh completion wrapper for git
 #
-# Copyright (c) 2012-2019 Felipe Contreras <felipe.contreras@gmail.com>
+# Copyright (c) 2012-2020 Felipe Contreras <felipe.contreras@gmail.com>
 #
-# The recommended way to install this script is to copy to '~/.zsh/_git', and
-# then add the following to your ~/.zshrc file:
+# The recommended way to install this script is to make a copy of it as a
+# file named '_git' inside any directory in your fpath.
+#
+# For example, create a directory '~/.zsh/', copy this file to '~/.zsh/_git',
+# and then add the following to your ~/.zshrc file:
 #
 #  fpath=(~/.zsh $fpath)
 #
-# You need git's bash completion script installed. By default it will use
-# bash-completion's script.
+# You need git's bash completion script installed. By default bash-completion's
+# location will be used (e.g. pkg-config --variable=completionsdir bash-completion).
 #
-# If your bash completion script is somewhere else, you can configure it on
-# your ~/.zshrc:
+# If your bash completion script is somewhere else, you can specify the
+# location in your ~/.zshrc:
 #
 #  zstyle ':completion:*:*:git:*' script ~/.git-completion.bash
 #
@@ -47,13 +50,35 @@ __gitcomp ()
 	case "$cur_" in
 	--*=)
 		;;
+	--no-*)
+		local c IFS=$' \t\n'
+		local -a array
+		for c in ${=1}; do
+			if [[ $c == "--" ]]; then
+				continue
+			fi
+			c="$c${4-}"
+			case $c in
+			--*=|*.) ;;
+			*) c="$c " ;;
+			esac
+			array+=("$c")
+		done
+		compset -P '*[=:]'
+		compadd -Q -S '' -p "${2-}" -a -- array && _ret=0
+		;;
 	*)
 		local c IFS=$' \t\n'
 		local -a array
 		for c in ${=1}; do
+			if [[ $c == "--" ]]; then
+				c="--no-...${4-}"
+				array+=("$c ")
+				break
+			fi
 			c="$c${4-}"
 			case $c in
-			--*=*|*.) ;;
+			--*=|*.) ;;
 			*) c="$c " ;;
 			esac
 			array+=("$c")
@@ -102,7 +127,13 @@ __gitcomp_file ()
 	compadd -f -p "${2-}" -- ${(f)1} && _ret=0
 }
 
-__git_complete_command () {
+_git_zsh ()
+{
+	__gitcomp "v1.0-rc"
+}
+
+__git_complete_command ()
+{
 	emulate -L zsh
 
 	local command="$1"
