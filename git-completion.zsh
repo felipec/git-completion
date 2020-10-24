@@ -127,6 +127,11 @@ __gitcomp_file_direct ()
 	__gitcomp_file "$1" ""
 }
 
+_git_zsh ()
+{
+	__gitcomp "v1.0"
+}
+
 __git_complete_command ()
 {
 	emulate -L zsh
