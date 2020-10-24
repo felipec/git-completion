@@ -129,7 +129,7 @@ __gitcomp_file ()
 
 _git_zsh ()
 {
-	__gitcomp "v1.0-rc"
+	__gitcomp "v1.0"
 }
 
 __git_complete_command ()
