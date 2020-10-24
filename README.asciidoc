@@ -92,6 +92,10 @@ You have to use the internal `__git_complete` function:
 
   __git_complete glm _git_log
 
+If you want a shortcut for the git command itself:
+
+  __git_complete g __git_main
+
 === Zsh ===
 
 You can use Zsh's `compdef`:
