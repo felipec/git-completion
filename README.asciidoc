@@ -19,7 +19,7 @@ With `git-completion` you can be sure you are using the latest completion that
 works in both shells, and any Git version.
 
 This is a sister project of the
-https://github.com/robbyrussell/oh-my-zsh/wiki/Plugins#gitfast[oh-my-zsh
+https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/gitfast[Oh My Zsh
 gitfast] plugin (that I also maintain), which has similar needs.
 
 == Installation ==
