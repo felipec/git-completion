@@ -97,11 +97,6 @@ __gitcomp_direct ()
 	compadd -Q -S '' -- ${(f)1} && _ret=0
 }
 
-__gitcomp_direct_append ()
-{
-	__gitcomp_direct "$@"
-}
-
 __gitcomp_nl ()
 {
 	emulate -L zsh
@@ -110,26 +105,26 @@ __gitcomp_nl ()
 	compadd -Q -S "${4- }" -p "${2-}" -- ${(f)1} && _ret=0
 }
 
-__gitcomp_nl_append ()
-{
-	emulate -L zsh
-
-	compset -P '*[=:]'
-	compadd -Q -S "${4- }" -p "${2-}" -- ${(f)1} && _ret=0
-}
-
-__gitcomp_file_direct ()
-{
-	emulate -L zsh
-
-	compadd -f -- ${(f)1} && _ret=0
-}
-
 __gitcomp_file ()
 {
 	emulate -L zsh
 
 	compadd -f -p "${2-}" -- ${(f)1} && _ret=0
+}
+
+__gitcomp_direct_append ()
+{
+	__gitcomp_direct "$@"
+}
+
+__gitcomp_nl_append ()
+{
+	__gitcomp_nl "$@"
+}
+
+__gitcomp_file_direct ()
+{
+	__gitcomp_file "$1" ""
 }
 
 _git_zsh ()
