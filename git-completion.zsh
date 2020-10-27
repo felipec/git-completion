@@ -27,12 +27,15 @@ zstyle -T ':completion:*:*:git:*' tag-order && \
 zstyle -s ":completion:*:*:git:*" script script
 if [ -z "$script" ]; then
 	local -a locations
-	local e
+	local e bash_completion
+
+	bash_completion=$(pkg-config --variable=completionsdir bash-completion 2>/dev/null) ||
+		bash_completion='/usr/share/bash-completion/completions/'
+
 	locations=(
 		"$(dirname ${funcsourcetrace[1]%:*})"/git-completion.bash
 		"$HOME/.local/share/bash-completion/completions/git"
-		"$(pkg-config --variable=completionsdir bash-completion)"/git
-		'/usr/share/bash-completion/completions/git'
+		"$bash_completion/git"
 		'/etc/bash_completion.d/git' # old debian
 		)
 	for e in $locations; do
