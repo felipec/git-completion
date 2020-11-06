@@ -24,83 +24,10 @@ gitfast] plugin (that I also maintain), which has similar needs.
 
 == Installation ==
 
-Simply run `make install`, then, depending on your shell:
+Simply run `make install`. Then, depending on your shell:
 
-=== Bash ===
-==== Completion ====
-
-If you are using bash-completion you don't have to do anything else, but if
-not; you simply need to source this file in your `~/.bashrc`:
-
-  source ~/.local/share/bash-completion/completions/git
-
-==== Prompt ====
-
-Source the prompt file in your `~/.bashrc`:
-
-  source ~/.local/share/git-completion/prompt.sh
-
-Change your PS1 (e.g. in `~/.bashrc`) to something that includes
-`$(__git_ps1)`, for example:
-
-  PS1='\h \w$(__git_ps1 "[%s]") \$ '
-
-If you want to use colors, or a faster prompt, you need to use the
-`PROMPT_COMMAND` mode instead:
-
-  GIT_PS1_SHOWCOLORHINTS=1
-  PROMPT_COMMAND='__git_ps1 "\h \w" " \\\$ " "[%s]"'
-
-In this mode the `__git_ps1` function will override the PS1 variable each time
-you are in a prompt.
-
-=== Zsh ===
-==== Completion ====
-
-Edit `~/.zshrc` and add the following:
-
-  fpath=(~/.local/share/git-completion/zsh $fpath)
-
-==== Prompt ====
-
-Source the prompt file in your `~/.zshrc`:
-
-  source ~/.local/share/git-completion/prompt.sh
-
-You need to add `$(__git_ps1)` to your PS1, for exmple in `~/.zshrc`:
-
-  setopt PROMPT_SUBST
-  PS1='%m %~$(__git_ps1 "[%s]") %# '
-
-If you want colors, simply add:
-
-  GIT_PS1_SHOWCOLORHINTS=1
-
-== Configuration ==
-
-By default aliases and custom commands are automatically handled, but you might
-have custom functions, for example:
-
-  glm() { git log ^master ${@:-HEAD} ; }
-
-There's no way for the completion to do the sensible thing here, unless you
-manually configure it:
-
-=== Bash ===
-
-You have to use the internal `__git_complete` function:
-
-  __git_complete glm _git_log
-
-If you want a shortcut for the git command itself:
-
-  __git_complete g __git_main
-
-=== Zsh ===
-
-You can use Zsh's `compdef`:
-
-  compdef _git glm=git_log
+* https://github.com/felipec/git-completion/wiki/Bash[Bash instructions].
+* https://github.com/felipec/git-completion/wiki/Zsh[Zsh instructions].
 
 == Improvements from upstream ==
 
