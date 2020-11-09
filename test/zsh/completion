@@ -1,0 +1,11 @@
+#!/bin/zsh
+
+zmodload zsh/zpty
+
+zpty zsh "ZDOTDIR=$(dirname $0) zsh"
+zpty -n -w zsh "$1"$'\t'
+zpty -r zsh log '*<END-CHOICES>'
+
+for x in ${(M)${(f)log}:#*'<LC><NO>'*}; do
+	print -- "${${x%'<EC>'*}#*'<RC>'}"
+done
