@@ -5,6 +5,10 @@
 
 . ./sharness.sh
 
+if which zsh > /dev/null 2>&1; then
+	test_set_prereq ZSH
+fi
+
 SRC_DIR="$SHARNESS_TEST_DIRECTORY"/..
 TRASH_DIRECTORY="$SHARNESS_TRASH_DIRECTORY"
 
