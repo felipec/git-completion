@@ -10,6 +10,10 @@ TRASH_DIRECTORY="$SHARNESS_TRASH_DIRECTORY"
 
 GIT_BUILD_DIR="$SRC_DIR"
 
+if which zsh > /dev/null 2>&1; then
+	test_set_prereq ZSH
+fi
+
 GIT_AUTHOR_EMAIL=author@example.com
 GIT_AUTHOR_NAME='A U Thor'
 GIT_COMMITTER_EMAIL=committer@example.com
