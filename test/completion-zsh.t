@@ -1058,7 +1058,7 @@ test_expect_success 'git config - value' '
 	EOF
 '
 
-test_expect_failure 'git -c - section' '
+test_expect_success 'git -c - section' '
 	test_completion "git -c br" <<-\EOF
 	branch.Z
 	browser.Z
@@ -1073,7 +1073,7 @@ test_expect_failure 'git -c - variable name' '
 	EOF
 '
 
-test_expect_failure 'git -c - value' '
+test_expect_success 'git -c - value' '
 	test_completion "git -c color.pager=" <<-\EOF
 	false Z
 	true Z
