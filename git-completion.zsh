@@ -49,6 +49,11 @@ COMP_WORDBREAKS=':'
 GIT_SOURCING_ZSH_COMPLETION=y . "$script"
 functions[complete]="$old_complete"
 
+__gitcompadd ()
+{
+	compadd -Q -p "${2-}" -S "${3- }" -- ${=1} && _ret=0
+}
+
 __gitcomp ()
 {
 	emulate -L zsh
@@ -61,7 +66,7 @@ __gitcomp ()
 	for c in ${=1}; do
 		if [[ $c == "--" ]]; then
 			[[ "$cur_" == --no-* ]] && continue
-			compadd -S " " -- '--no-...' && _ret=0
+			__gitcompadd "--no-..."
 			break
 		fi
 
@@ -73,7 +78,7 @@ __gitcomp ()
 		else
 			sfx="$4"
 		fi
-		compadd -Q -p "${2-}" -S "$sfx" -- "$c" && _ret=0
+		__gitcompadd "$c" "${2-}" "$sfx"
 	done
 }
 
@@ -81,14 +86,14 @@ __gitcomp_direct ()
 {
 	emulate -L zsh
 
-	compadd -Q -S '' -- ${(f)1} && _ret=0
+	IFS=$'\n' __gitcompadd "$1" "" ""
 }
 
 __gitcomp_nl ()
 {
 	emulate -L zsh
 
-	compadd -Q -S "${4- }" -p "${2-}" -- ${(f)1} && _ret=0
+	IFS=$'\n' __gitcompadd "$1" "${2-}" "${4- }"
 }
 
 __gitcomp_file ()
