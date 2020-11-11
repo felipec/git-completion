@@ -82,11 +82,6 @@ __gitcomp ()
 	done
 }
 
-__gitcomp_direct ()
-{
-	__gitcomp_nl "$1" "" "" ""
-}
-
 __gitcomp_nl ()
 {
 	emulate -L zsh
@@ -101,9 +96,14 @@ __gitcomp_file ()
 	compadd -f -p "${2-}" -- ${(f)1} && _ret=0
 }
 
-__gitcomp_direct_append ()
+__gitcomp_direct ()
 {
-	__gitcomp_direct "$@"
+	__gitcomp_nl "$1" "" "" ""
+}
+
+__gitcomp_file_direct ()
+{
+	__gitcomp_file "$1" ""
 }
 
 __gitcomp_nl_append ()
@@ -111,9 +111,9 @@ __gitcomp_nl_append ()
 	__gitcomp_nl "$@"
 }
 
-__gitcomp_file_direct ()
+__gitcomp_direct_append ()
 {
-	__gitcomp_file "$1" ""
+	__gitcomp_direct "$@"
 }
 
 _git_zsh ()
