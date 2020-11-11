@@ -84,9 +84,7 @@ __gitcomp ()
 
 __gitcomp_direct ()
 {
-	emulate -L zsh
-
-	IFS=$'\n' __gitcompadd "$1" "" ""
+	__gitcomp_nl "$1" "" "" ""
 }
 
 __gitcomp_nl ()
