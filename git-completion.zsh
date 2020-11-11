@@ -51,7 +51,7 @@ functions[complete]="$old_complete"
 
 __gitcompadd ()
 {
-	compadd -Q -p "${2-}" -S "${3- }" -- ${=1} && _ret=0
+	compadd -Q -p "${2-}" -S "${3- }" ${@[4,-1]} -- ${=1} && _ret=0
 }
 
 __gitcomp ()
@@ -72,13 +72,14 @@ __gitcomp ()
 
 		if [[ -z "${4-}" ]]; then
 			case $c in
-			*=|*.) sfx="" ;;
+			*=) c="${c%=}"; sfx="=" ;;
+			*.) sfx="" ;;
 			*) sfx=" " ;;
 			esac
 		else
 			sfx="$4"
 		fi
-		__gitcompadd "$c" "${2-}" "$sfx"
+		__gitcompadd "$c" "${2-}" "$sfx" -q
 	done
 }
 
