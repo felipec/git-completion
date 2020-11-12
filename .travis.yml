@@ -5,5 +5,10 @@ branches:
   only:
   - master
 
+addons:
+  apt:
+    packages:
+      - zsh
+
 script:
   - make test
