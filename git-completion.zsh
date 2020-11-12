@@ -123,11 +123,6 @@ _git_zsh ()
 	__gitcomp "v1.1"
 }
 
-_git_zsh ()
-{
-	__gitcomp "v1.1"
-}
-
 __git_complete_command ()
 {
 	emulate -L zsh
