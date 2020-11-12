@@ -66,6 +66,15 @@ test_gitcomp_nl ()
 	test_cmp expected out
 }
 
+offgit ()
+{
+	GIT_CEILING_DIRECTORIES="$ROOT" &&
+	export GIT_CEILING_DIRECTORIES &&
+	test_when_finished "ROOT='$ROOT'; cd '$TRASH_DIRECTORY'; unset GIT_CEILING_DIRECTORIES" &&
+	ROOT="$ROOT"/non-repo &&
+	cd "$ROOT"
+}
+
 actual="$TRASH_DIRECTORY/actual"
 
 if test_have_prereq MINGW
@@ -736,6 +745,7 @@ test_expect_success 'teardown after ref completion' '
 '
 
 test_expect_success 'basic' '
+	offgit &&
 	run_completion "git " &&
 	# built-in
 	grep -q "^add\$" out &&
@@ -749,6 +759,7 @@ test_expect_success 'basic' '
 '
 
 test_expect_success 'double dash "git" itself' '
+	offgit &&
 	test_completion "git --" <<-\EOF
 	--paginate
 	--no-pager
@@ -767,6 +778,7 @@ test_expect_success 'double dash "git" itself' '
 '
 
 test_expect_success 'double dash "git checkout"' '
+	offgit &&
 	test_completion "git checkout --" <<-\EOF
 	--quiet Z
 	--detach Z
@@ -791,6 +803,7 @@ test_expect_success 'double dash "git checkout"' '
 '
 
 test_expect_success 'general options' '
+	offgit &&
 	test_completion "git --ver" "--version" &&
 	test_completion "git --hel" "--help" &&
 	test_completion "git --exe" "--exec-path" &&
@@ -806,6 +819,7 @@ test_expect_success 'general options' '
 '
 
 test_expect_success 'general options plus command' '
+	offgit &&
 	test_completion "git --version check" "" &&
 	test_completion "git --paginate check" "checkout" &&
 	test_completion "git --git-dir=foo check" "checkout" &&
@@ -826,6 +840,7 @@ test_expect_success 'general options plus command' '
 '
 
 test_expect_success 'git --help completion' '
+	offgit &&
 	test_completion "git --help ad" "add " &&
 	test_completion "git --help core" "core-tutorial "
 '
@@ -888,11 +903,12 @@ test_expect_success 'complete tree filename with metacharacters' '
 '
 
 test_expect_success PERL 'send-email' '
-	test_completion "git send-email --cov" <<-\EOF &&
+	test_completion "git send-email ma" "main " &&
+	offgit &&
+	test_completion "git send-email --cov" <<-\EOF
 	--cover-from-description=Z
 	--cover-letter Z
 	EOF
-	test_completion "git send-email ma" "main "
 '
 
 test_expect_success 'complete files' '
@@ -989,7 +1005,7 @@ test_expect_success "recursive alias" '
 '
 
 test_expect_success "completion uses <cmd> completion for alias: !sh -c 'git <cmd> ...'" '
-	test_config alias.co "!sh -c '"'"'git checkout ...'"'"'" &&
+	test_config_global alias.co "!sh -c '"'"'git checkout ...'"'"'" &&
 	test_completion "git co m" <<-\EOF
 	main Z
 	mybranch Z
@@ -998,7 +1014,7 @@ test_expect_success "completion uses <cmd> completion for alias: !sh -c 'git <cm
 '
 
 test_expect_success 'completion uses <cmd> completion for alias: !f () { VAR=val git <cmd> ... }' '
-	test_config alias.co "!f () { VAR=val git checkout ... ; } f" &&
+	test_config_global alias.co "!f () { VAR=val git checkout ... ; } f" &&
 	test_completion "git co m" <<-\EOF
 	main Z
 	mybranch Z
@@ -1007,7 +1023,7 @@ test_expect_success 'completion uses <cmd> completion for alias: !f () { VAR=val
 '
 
 test_expect_success 'completion used <cmd> completion for alias: !f() { : git <cmd> ; ... }' '
-	test_config alias.co "!f() { : git checkout ; if ... } f" &&
+	test_config_global alias.co "!f() { : git checkout ; if ... } f" &&
 	test_completion "git co m" <<-\EOF
 	main Z
 	mybranch Z
@@ -1016,6 +1032,7 @@ test_expect_success 'completion used <cmd> completion for alias: !f() { : git <c
 '
 
 test_expect_success 'completion without explicit _git_xxx function' '
+	offgit &&
 	test_completion "git version --" <<-\EOF
 	--build-options Z
 	--no-build-options Z
