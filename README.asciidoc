@@ -4,9 +4,8 @@ shells.
 
 Most Git developers use the Bash shell, for which the completion scripts work
 rather well, however, Zsh is typically neglected. I've sent many patches to fix
-the issues, many have been merged, but in the last years all my patches have
-been ignored, thus the need for a canonical location of a good, working Zsh
-completion.
+the issues, many have been merged, but many have been ignored, thus the need for
+a canonical location of a good, working Zsh completion.
 
 There are advantages for Bash users too. Currently the scripts under `contrib`
 are tied to the specific Git version, for example
@@ -42,3 +41,4 @@ This is a short list of the benefits you get:
 * Zsh: other cosmetic improvements
 * Bash: works in older versions of Git
 * Bash: works outside of a Git repository
+* Both: Plenty of bug fixes
