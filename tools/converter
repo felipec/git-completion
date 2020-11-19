@@ -1,0 +1,30 @@
+#!/usr/bin/env ruby
+
+$reverse = !!ARGV.delete('-r')
+
+repo_a = Dir.pwd
+repo_b = ARGV.shift
+revset = ARGV
+
+repo_a, repo_b = repo_b, repo_a if $reverse
+
+$converts = [
+  %w[git-completion.zsh contrib/completion/git-completion.zsh],
+  %w[git-completion.bash contrib/completion/git-completion.bash],
+  %w[git-prompt.sh contrib/completion/git-prompt.sh],
+  %w[test/completion.t t/t9902-completion.sh],
+  %w[test/prompt.t t/t9903-bash-prompt.sh],
+]
+
+def convert(str)
+  $converts.reduce(str) do |m,(a,b)|
+    a, b = b, a if $reverse
+    m.gsub(/(a|b)\/#{a}/, "\\1/#{b}").gsub(/^ #{a}/, " #{b}")
+  end
+end
+
+IO.popen(%w[git format-patch --no-cover-letter --stdout] + revset, 'r', chdir: repo_a) do |format_patch|
+  IO.popen(%w[git am], 'w', chdir: repo_b) do |am|
+    am.write(convert(format_patch.read))
+  end
+end
