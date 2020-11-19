@@ -5,6 +5,7 @@ LC_ALL=C
 PS1="<PROMPT>"
 TERM=dumb
 fpath=($ZDOTDIR $fpath)
+LISTMAX=1000 # There seems to be a bug in zsh with several thousands
 
 autoload -U compinit && compinit -u
 
