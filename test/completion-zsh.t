@@ -999,8 +999,7 @@ test_expect_success 'git config - value' '
 	EOF
 '
 
-# TODO: this fails because of a bug in zsh with unset variables
-test_expect_failure 'git config - direct completions' '
+test_expect_success 'git config - direct completions' '
 	test_completion "git config branch.autoSetup" <<-\EOF
 	branch.autoSetupMerge Z
 	branch.autoSetupRebase Z
