@@ -145,7 +145,8 @@ fi
 test_expect_success 'setup for __git_find_repo_path/__gitdir tests' '
 	mkdir -p subdir/subsubdir &&
 	mkdir -p non-repo &&
-	git init -b main otherrepo
+	git init otherrepo &&
+	echo "ref: refs/heads/main" > otherrepo/.git/HEAD
 '
 
 test_expect_success '__git_find_repo_path - from command line (through $__git_dir)' '
