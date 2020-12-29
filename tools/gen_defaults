@@ -4,6 +4,8 @@ def title(text)
   puts [nil, text, '-' * text.size]
 end
 
+ENV['PATH'] = '/opt/git/bin:/usr/bin'
+
 title 'Options'
 
 cmds = %x[git --list-cmds=parseopt].split(" ")
