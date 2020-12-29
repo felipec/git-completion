@@ -84,7 +84,7 @@ fi
 test_expect_success 'setup for __git_find_repo_path/__gitdir tests' '
 	mkdir -p subdir/subsubdir &&
 	mkdir -p non-repo &&
-	git init otherrepo
+	git init -b main otherrepo
 '
 
 test_expect_success '__gitcomp - trailing space - options' '
@@ -212,12 +212,13 @@ test_expect_success '__gitcomp_nl - no suffix' '
 
 test_expect_success 'setup for ref completion' '
 	git commit --allow-empty -m initial &&
+	git branch -M main &&
 	git branch matching-branch &&
 	git tag matching-tag &&
 	(
 		cd otherrepo &&
 		git commit --allow-empty -m initial &&
-		git branch -m master master-in-other &&
+		git branch -m main main-in-other &&
 		git branch branch-in-other &&
 		git tag tag-in-other
 	) &&
@@ -230,8 +231,8 @@ test_expect_success 'setup for ref completion' '
 test_expect_success 'git switch - with no options, complete local branches and unique remote branch names for DWIM logic' '
 	test_completion "git switch " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
@@ -240,25 +241,25 @@ test_expect_success 'git checkout - completes refs and unique remote branches fo
 	test_completion "git checkout " <<-\EOF
 	HEAD Z
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with --no-guess, complete only local branches' '
 	test_completion "git switch --no-guess " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git switch - with GIT_COMPLETION_CHECKOUT_NO_GUESS=1, complete only local branches' '
 	GIT_COMPLETION_CHECKOUT_NO_GUESS=1 test_completion "git switch " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
@@ -266,8 +267,8 @@ test_expect_success 'git switch - with GIT_COMPLETION_CHECKOUT_NO_GUESS=1, compl
 test_expect_success 'git switch - --guess overrides GIT_COMPLETION_CHECKOUT_NO_GUESS=1, complete local branches and unique remote names for DWIM logic' '
 	GIT_COMPLETION_CHECKOUT_NO_GUESS=1 test_completion "git switch --guess " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
@@ -275,15 +276,15 @@ test_expect_success 'git switch - --guess overrides GIT_COMPLETION_CHECKOUT_NO_G
 test_expect_success 'git switch - a later --guess overrides previous --no-guess, complete local and remote unique branches for DWIM' '
 	test_completion "git switch --no-guess --guess " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git switch - a later --no-guess overrides previous --guess, complete only local branches' '
 	test_completion "git switch --guess --no-guess " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
@@ -291,11 +292,11 @@ test_expect_success 'git switch - a later --no-guess overrides previous --guess,
 test_expect_success 'git checkout - with GIT_COMPLETION_NO_GUESS=1 only completes refs' '
 	GIT_COMPLETION_CHECKOUT_NO_GUESS=1 test_completion "git checkout " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
@@ -303,23 +304,23 @@ test_expect_success 'git checkout - --guess overrides GIT_COMPLETION_NO_GUESS=1,
 	GIT_COMPLETION_CHECKOUT_NO_GUESS=1 test_completion "git checkout --guess " <<-\EOF
 	HEAD Z
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with --no-guess, only completes refs' '
 	test_completion "git checkout --no-guess " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
@@ -327,87 +328,139 @@ test_expect_success 'git checkout - a later --guess overrides previous --no-gues
 	test_completion "git checkout --no-guess --guess " <<-\EOF
 	HEAD Z
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - a later --no-guess overrides previous --guess, complete only refs' '
 	test_completion "git checkout --guess --no-guess " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
+	EOF
+'
+
+test_expect_success 'git checkout - with checkout.guess = false, only completes refs' '
+	test_config checkout.guess false &&
+	test_completion "git checkout " <<-\EOF
+	HEAD Z
+	main Z
+	matching-branch Z
+	matching-tag Z
+	other/branch-in-other Z
+	other/main-in-other Z
+	EOF
+'
+
+test_expect_success 'git checkout - with checkout.guess = true, completes refs and unique remote branches for DWIM' '
+	test_config checkout.guess true &&
+	test_completion "git checkout " <<-\EOF
+	HEAD Z
+	branch-in-other Z
+	main Z
+	main-in-other Z
+	matching-branch Z
+	matching-tag Z
+	other/branch-in-other Z
+	other/main-in-other Z
+	EOF
+'
+
+test_expect_success 'git checkout - a later --guess overrides previous checkout.guess = false, complete refs and unique remote branches for DWIM' '
+	test_config checkout.guess false &&
+	test_completion "git checkout --guess " <<-\EOF
+	HEAD Z
+	branch-in-other Z
+	main Z
+	main-in-other Z
+	matching-branch Z
+	matching-tag Z
+	other/branch-in-other Z
+	other/main-in-other Z
+	EOF
+'
+
+test_expect_success 'git checkout - a later --no-guess overrides previous checkout.guess = true, complete only refs' '
+	test_config checkout.guess true &&
+	test_completion "git checkout --no-guess " <<-\EOF
+	HEAD Z
+	main Z
+	matching-branch Z
+	matching-tag Z
+	other/branch-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with --detach, complete all references' '
 	test_completion "git switch --detach " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with --detach, complete only references' '
 	test_completion "git checkout --detach " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with -d, complete all references' '
 	test_completion "git switch -d " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with -d, complete only references' '
 	test_completion "git checkout -d " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with --track, complete only remote branches' '
 	test_completion "git switch --track " <<-\EOF
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with --track, complete only remote branches' '
 	test_completion "git checkout --track " <<-\EOF
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with --no-track, complete only local branch names' '
 	test_completion "git switch --no-track " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
@@ -415,151 +468,151 @@ test_expect_success 'git switch - with --no-track, complete only local branch na
 test_expect_success 'git checkout - with --no-track, complete only local references' '
 	test_completion "git checkout --no-track " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with -c, complete all references' '
 	test_completion "git switch -c new-branch " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with -C, complete all references' '
 	test_completion "git switch -C new-branch " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with -c and --track, complete all references' '
 	test_completion "git switch -c new-branch --track " <<-EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with -C and --track, complete all references' '
 	test_completion "git switch -C new-branch --track " <<-EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with -c and --no-track, complete all references' '
 	test_completion "git switch -c new-branch --no-track " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - with -C and --no-track, complete all references' '
 	test_completion "git switch -C new-branch --no-track " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with -b, complete all references' '
 	test_completion "git checkout -b new-branch " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with -B, complete all references' '
 	test_completion "git checkout -B new-branch " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with -b and --track, complete all references' '
 	test_completion "git checkout -b new-branch --track " <<-EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with -B and --track, complete all references' '
 	test_completion "git checkout -B new-branch --track " <<-EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with -b and --no-track, complete all references' '
 	test_completion "git checkout -b new-branch --no-track " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git checkout - with -B and --no-track, complete all references' '
 	test_completion "git checkout -B new-branch --no-track " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
 test_expect_success 'git switch - for -c, complete local branches and unique remote branches' '
 	test_completion "git switch -c " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
@@ -567,36 +620,36 @@ test_expect_success 'git switch - for -c, complete local branches and unique rem
 test_expect_success 'git switch - for -C, complete local branches and unique remote branches' '
 	test_completion "git switch -C " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git switch - for -c with --no-guess, complete local branches only' '
 	test_completion "git switch --no-guess -c " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git switch - for -C with --no-guess, complete local branches only' '
 	test_completion "git switch --no-guess -C " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git switch - for -c with --no-track, complete local branches only' '
 	test_completion "git switch --no-track -c " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git switch - for -C with --no-track, complete local branches only' '
 	test_completion "git switch --no-track -C " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
@@ -604,8 +657,8 @@ test_expect_success 'git switch - for -C with --no-track, complete local branche
 test_expect_success 'git checkout - for -b, complete local branches and unique remote branches' '
 	test_completion "git checkout -b " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
@@ -613,36 +666,36 @@ test_expect_success 'git checkout - for -b, complete local branches and unique r
 test_expect_success 'git checkout - for -B, complete local branches and unique remote branches' '
 	test_completion "git checkout -B " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git checkout - for -b with --no-guess, complete local branches only' '
 	test_completion "git checkout --no-guess -b " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git checkout - for -B with --no-guess, complete local branches only' '
 	test_completion "git checkout --no-guess -B " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git checkout - for -b with --no-track, complete local branches only' '
 	test_completion "git checkout --no-track -b " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git checkout - for -B with --no-track, complete local branches only' '
 	test_completion "git checkout --no-track -B " <<-\EOF
-	master Z
+	main Z
 	matching-branch Z
 	EOF
 '
@@ -650,14 +703,14 @@ test_expect_success 'git checkout - for -B with --no-track, complete local branc
 test_expect_success 'git switch - with --orphan completes local branch names and unique remote branch names' '
 	test_completion "git switch --orphan " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git switch - --orphan with branch already provided completes nothing else' '
-	test_completion "git switch --orphan master " <<-\EOF
+	test_completion "git switch --orphan main " <<-\EOF
 
 	EOF
 '
@@ -665,20 +718,20 @@ test_expect_success 'git switch - --orphan with branch already provided complete
 test_expect_success 'git checkout - with --orphan completes local branch names and unique remote branch names' '
 	test_completion "git checkout --orphan " <<-\EOF
 	branch-in-other Z
-	master Z
-	master-in-other Z
+	main Z
+	main-in-other Z
 	matching-branch Z
 	EOF
 '
 
 test_expect_success 'git checkout - --orphan with branch already provided completes local refs for a start-point' '
-	test_completion "git checkout --orphan master " <<-\EOF
+	test_completion "git checkout --orphan main " <<-\EOF
 	HEAD Z
-	master Z
+	main Z
 	matching-branch Z
 	matching-tag Z
 	other/branch-in-other Z
-	other/master-in-other Z
+	other/main-in-other Z
 	EOF
 '
 
@@ -800,7 +853,7 @@ test_expect_success 'setup for integration tests' '
 
 test_expect_success 'checkout completes ref names' '
 	test_completion "git checkout m" <<-\EOF
-	master Z
+	main Z
 	mybranch Z
 	mytag Z
 	EOF
@@ -814,7 +867,7 @@ test_expect_success 'git -C <path> checkout uses the right repo' '
 
 test_expect_success 'show completes all refs' '
 	test_completion "git show m" <<-\EOF
-	master Z
+	main Z
 	mybranch Z
 	mytag Z
 	EOF
@@ -847,7 +900,7 @@ test_expect_success 'complete tree filename with metacharacters' '
 '
 
 test_expect_success PERL 'send-email' '
-	test_completion "git send-email ma" "master " &&
+	test_completion "git send-email ma" "main " &&
 	offgit &&
 	test_completion "git send-email --cov" <<-\EOF
 	--cover-from-description=Z
@@ -929,10 +982,29 @@ test_expect_success 'complete files' '
 	test_completion "git add mom" "momified"
 '
 
+test_expect_success "simple alias" '
+	test_config alias.co checkout &&
+	test_completion "git co m" <<-\EOF
+	main Z
+	mybranch Z
+	mytag Z
+	EOF
+'
+
+test_expect_success "recursive alias" '
+	test_config alias.co checkout &&
+	test_config alias.cod "co --detached" &&
+	test_completion "git cod m" <<-\EOF
+	main Z
+	mybranch Z
+	mytag Z
+	EOF
+'
+
 test_expect_success "completion uses <cmd> completion for alias: !sh -c 'git <cmd> ...'" '
 	test_config_global alias.co "!sh -c '"'"'git checkout ...'"'"'" &&
 	test_completion "git co m" <<-\EOF
-	master Z
+	main Z
 	mybranch Z
 	mytag Z
 	EOF
@@ -941,7 +1013,7 @@ test_expect_success "completion uses <cmd> completion for alias: !sh -c 'git <cm
 test_expect_success 'completion uses <cmd> completion for alias: !f () { VAR=val git <cmd> ... }' '
 	test_config_global alias.co "!f () { VAR=val git checkout ... ; } f" &&
 	test_completion "git co m" <<-\EOF
-	master Z
+	main Z
 	mybranch Z
 	mytag Z
 	EOF
@@ -950,7 +1022,7 @@ test_expect_success 'completion uses <cmd> completion for alias: !f () { VAR=val
 test_expect_success 'completion used <cmd> completion for alias: !f() { : git <cmd> ; ... }' '
 	test_config_global alias.co "!f() { : git checkout ; if ... } f" &&
 	test_completion "git co m" <<-\EOF
-	master Z
+	main Z
 	mybranch Z
 	mytag Z
 	EOF
