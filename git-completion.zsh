@@ -51,10 +51,17 @@ functions[complete]="$old_complete"
 
 __gitcompadd ()
 {
-	compadd -Q -p "${2-}" -S "${3- }" ${@[4,-1]} -- ${=1} && _ret=0
+	compadd -p "${2-}" -S "${3- }" -q -- ${=1} && _ret=0
 }
 
 __gitcomp ()
+{
+	emulate -L zsh
+
+	IFS=$' \t\n' __gitcompadd "$1" "${2-}" "${4- }"
+}
+
+__gitcomp_opts ()
 {
 	emulate -L zsh
 
@@ -70,7 +77,7 @@ __gitcomp ()
 			break
 		fi
 
-		if [[ -z "${4-}" ]]; then
+		if [[ -z "${4+set}" ]]; then
 			case $c in
 			*=) c="${c%=}"; sfx="=" ;;
 			*.) sfx="" ;;
@@ -79,7 +86,7 @@ __gitcomp ()
 		else
 			sfx="$4"
 		fi
-		__gitcompadd "$c" "${2-}" "$sfx" -q
+		__gitcompadd "$c" "${2-}" "$sfx"
 	done
 }
 
@@ -87,7 +94,10 @@ __gitcomp_nl ()
 {
 	emulate -L zsh
 
-	IFS=$'\n' __gitcompadd "$1" "${2-}" "${4- }"
+	# words that don't end up in space
+	compadd -p "${2-}" -S "${4- }" -q -- ${${(f)1}:#*\ } && _ret=0
+	# words that end in space
+	compadd -p "${2-}" -S " ${4- }" -q -- ${${(M)${(f)1}:#*\ }% } && _ret=0
 }
 
 __gitcomp_file ()
@@ -105,16 +115,6 @@ __gitcomp_direct ()
 __gitcomp_file_direct ()
 {
 	__gitcomp_file "$1" ""
-}
-
-__gitcomp_nl_append ()
-{
-	__gitcomp_nl "$@"
-}
-
-__gitcomp_direct_append ()
-{
-	__gitcomp_direct "$@"
 }
 
 _git_zsh ()
