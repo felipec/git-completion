@@ -7,10 +7,9 @@ rather well, however, Zsh is typically neglected. I've sent many patches to fix
 the issues, many have been merged, but many have been ignored, thus the need for
 a canonical location of a good, working Zsh completion.
 
-There are advantages for Bash users too. Currently the scripts under `contrib`
-are tied to the specific Git version, for example
-the completion scripts of version v2.22
-(https://git.kernel.org/pub/scm/git/git.git/plain/contrib/completion/git-completion.bash?h=v2.22.0[git-completion.bash])
+There are advantages for Bash users too. Currently the scripts under `contrib` are tied to the
+specific Git version, for example the completion scripts of version v2.30
+(https://git.kernel.org/pub/scm/git/git.git/plain/contrib/completion/git-completion.bash?h=v2.30.0[git-completion.bash])
 don't work with older versions of Git (e.g. v2.16); the ones in
 this project do.
 
@@ -33,12 +32,9 @@ Simply run `make install`. Then, depending on your shell:
 This is a short list of the benefits you get:
 
 * Easier installation
-* Zsh: doesn't add extra spaces
-* Zsh: colors work without PC
-* Zsh: custom aliases can be configured
-* Zsh: fixed many --options and --no-options
-* Zsh: don't mess with bashcomp
-* Zsh: other cosmetic improvements
-* Bash: works in older versions of Git
-* Bash: works outside of a Git repository
-* Both: Plenty of bug fixes
+* Tons of bug fixes
+* Works with older versions of git
+* Zsh: much more options
+* Zsh: quoting works properly
+* Zsh: automatic suffix removal
+* Works outside of a Git repository
