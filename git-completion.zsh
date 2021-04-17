@@ -120,7 +120,7 @@ __gitcomp_file_direct ()
 
 _git_zsh ()
 {
-	__gitcomp "v1.3"
+	__gitcomp "v1.3.1"
 }
 
 __git_complete_command ()
