@@ -5,6 +5,9 @@
 
 test_description='test bash completion'
 
+GIT_TEST_DEFAULT_INITIAL_BRANCH_NAME=master
+export GIT_TEST_DEFAULT_INITIAL_BRANCH_NAME
+
 . ./lib-bash.sh
 
 complete ()
@@ -2381,7 +2384,6 @@ test_expect_success 'sourcing the completion script clears cached commands' '
 
 test_expect_success 'sourcing the completion script clears cached merge strategies' '
 	offgit &&
-	GIT_TEST_GETTEXT_POISON=false &&
 	__git_compute_merge_strategies &&
 	verbose test -n "$__git_merge_strategies" &&
 	. "$SRC_DIR/git-completion.bash" &&
