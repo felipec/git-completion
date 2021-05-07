@@ -22,7 +22,7 @@ gitfast] plugin (that I also maintain), which has similar needs.
 
 == Installation ==
 
-Simply run `make install`. Then, depending on your shell:
+Simply run `make install`, then, depending on your shell:
 
 * https://github.com/felipec/git-completion/wiki/Bash[Bash instructions].
 * https://github.com/felipec/git-completion/wiki/Zsh[Zsh instructions].
