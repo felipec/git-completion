@@ -38,3 +38,6 @@ This is a short list of the benefits you get:
 * Zsh: quoting works properly
 * Zsh: automatic suffix removal
 * Works outside of a Git repository
+
+For a full list of all the patches on top of upstream git check
+https://github.com/felipec/git-completion/wiki/Patches[Patches].
