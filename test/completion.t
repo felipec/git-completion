@@ -2324,7 +2324,7 @@ test_expect_success 'git config - section' '
 	EOF
 '
 
-test_expect_success 'git config - variable name' '
+test_expect_unstable 'git config - variable name' '
 	test_completion "git config log.d" <<-\EOF
 	log.date Z
 	log.decorate Z
@@ -2353,7 +2353,7 @@ test_expect_success 'git -c - section' '
 	EOF
 '
 
-test_expect_success 'git -c - variable name' '
+test_expect_unstable 'git -c - variable name' '
 	test_completion "git -c log.d" <<-\EOF
 	log.date=Z
 	log.decorate=Z
@@ -2375,7 +2375,7 @@ test_expect_success 'git clone --config= - section' '
 	EOF
 '
 
-test_expect_success 'git clone --config= - variable name' '
+test_expect_unstable 'git clone --config= - variable name' '
 	test_completion "git clone --config=log.d" <<-\EOF
 	log.date=Z
 	log.decorate=Z
