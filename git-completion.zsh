@@ -246,7 +246,7 @@ __git_zsh_main ()
 		emulate ksh -c __git_complete_config_variable_name_and_value
 		;;
 	(arg)
-		local command="${words[1]}" __git_dir
+		local command="${words[1]}" __git_dir __git_cmd_idx=1
 
 		if (( $+opt_args[--bare] )); then
 			__git_dir='.'

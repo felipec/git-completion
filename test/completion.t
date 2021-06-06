@@ -1875,6 +1875,7 @@ test_expect_success '__git_find_on_cmdline - single match' '
 	(
 		words=(git command --opt list) &&
 		cword=${#words[@]} &&
+		__git_cmd_idx=1 &&
 		__git_find_on_cmdline "add list remove" >actual
 	) &&
 	test_cmp expect actual
@@ -1885,6 +1886,7 @@ test_expect_success '__git_find_on_cmdline - multiple matches' '
 	(
 		words=(git command -o --opt remove list add) &&
 		cword=${#words[@]} &&
+		__git_cmd_idx=1 &&
 		__git_find_on_cmdline "add list remove" >actual
 	) &&
 	test_cmp expect actual
@@ -1894,6 +1896,7 @@ test_expect_success '__git_find_on_cmdline - no match' '
 	(
 		words=(git command --opt branch) &&
 		cword=${#words[@]} &&
+		__git_cmd_idx=1 &&
 		__git_find_on_cmdline "add list remove" >actual
 	) &&
 	test_must_be_empty actual
@@ -1904,6 +1907,7 @@ test_expect_success '__git_find_on_cmdline - single match with index' '
 	(
 		words=(git command --opt list) &&
 		cword=${#words[@]} &&
+		__git_cmd_idx=1 &&
 		__git_find_on_cmdline --show-idx "add list remove" >actual
 	) &&
 	test_cmp expect actual
@@ -1914,6 +1918,7 @@ test_expect_success '__git_find_on_cmdline - multiple matches with index' '
 	(
 		words=(git command -o --opt remove list add) &&
 		cword=${#words[@]} &&
+		__git_cmd_idx=1 &&
 		__git_find_on_cmdline --show-idx "add list remove" >actual
 	) &&
 	test_cmp expect actual
@@ -1923,9 +1928,21 @@ test_expect_success '__git_find_on_cmdline - no match with index' '
 	(
 		words=(git command --opt branch) &&
 		cword=${#words[@]} &&
+		__git_cmd_idx=1 &&
 		__git_find_on_cmdline --show-idx "add list remove" >actual
 	) &&
 	test_must_be_empty actual
+'
+
+test_expect_success '__git_find_on_cmdline - ignores matches before command with index' '
+	echo "6 remove" >expect &&
+	(
+		words=(git -C remove command -o --opt remove list add) &&
+		cword=${#words[@]} &&
+		__git_cmd_idx=3 &&
+		__git_find_on_cmdline --show-idx "add list remove" >actual
+	) &&
+	test_cmp expect actual
 '
 
 test_expect_success '__git_get_config_variables' '
@@ -2280,6 +2297,7 @@ do
 		(
 			words=(git push '$flag' other ma) &&
 			cword=${#words[@]} cur=${words[cword-1]} &&
+			__git_cmd_idx=1 &&
 			run_func __git_complete_remote_or_refspec
 		) &&
 		test_cmp expected out
@@ -2292,6 +2310,7 @@ do
 		(
 			words=(git push other '$flag' ma) &&
 			cword=${#words[@]} cur=${words[cword-1]} &&
+			__git_cmd_idx=1 &&
 			run_func __git_complete_remote_or_refspec
 		) &&
 		test_cmp expected out
@@ -2309,6 +2328,7 @@ test_expect_success 'git config - variable name' '
 	test_completion "git config log.d" <<-\EOF
 	log.date Z
 	log.decorate Z
+	log.diffMerges Z
 	EOF
 '
 
@@ -2337,6 +2357,7 @@ test_expect_success 'git -c - variable name' '
 	test_completion "git -c log.d" <<-\EOF
 	log.date=Z
 	log.decorate=Z
+	log.diffMerges=Z
 	EOF
 '
 
@@ -2358,6 +2379,7 @@ test_expect_success 'git clone --config= - variable name' '
 	test_completion "git clone --config=log.d" <<-\EOF
 	log.date=Z
 	log.decorate=Z
+	log.diffMerges=Z
 	EOF
 '
 
