@@ -244,7 +244,7 @@ __git_zsh_main ()
 		emulate ksh -c __git_complete_config_variable_name_and_value
 		;;
 	(arg)
-		local command="${words[1]}" __git_dir __git_cmd_idx=1
+		local command="${words[1]}" __git_dir
 
 		if (( $+opt_args[--bare] )); then
 			__git_dir='.'
@@ -268,7 +268,7 @@ __git_zsh_main ()
 _git ()
 {
 	local _ret=1
-	local cur cword prev
+	local cur cword prev __git_cmd_idx=1
 
 	cur=${words[CURRENT]}
 	prev=${words[CURRENT-1]}
