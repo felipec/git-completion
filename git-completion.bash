@@ -3555,7 +3555,7 @@ __git_get_comp_words_by_ref ()
 
 __git_func_wrap ()
 {
-	local cur words cword prev __git_cmd_idx=1
+	local cur words cword prev __git_cmd_idx=0
 	__git_get_comp_words_by_ref
 	$1
 }
