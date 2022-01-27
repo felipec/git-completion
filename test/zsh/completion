@@ -2,7 +2,7 @@
 
 zmodload zsh/zpty
 
-zpty zsh "ZDOTDIR=$(dirname $0) zsh"
+zpty zsh "ZDOTDIR=$(dirname $0) zsh -o NO_GLOBAL_RCS"
 zpty -n -w zsh "$1"$'\t'
 zpty -r zsh log '*<END-CHOICES>'
 
