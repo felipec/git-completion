@@ -2680,7 +2680,7 @@ __git_complete_config_variable_name ()
 		;;
 	*)
 		__git_compute_config_sections
-		__gitcomp "$__git_config_sections" "" "$cur_" "."
+		__gitcomp_nl "$__git_config_sections" "" "$cur_" "."
 		;;
 	esac
 }
