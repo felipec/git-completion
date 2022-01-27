@@ -1,7 +1,7 @@
 #!/bin/sh
 
 url="https://git.kernel.org/pub/scm/git/git.git/plain"
-version="2.32.0"
+version="2.33.0"
 
 git stash push -q &&
 git checkout -q upstream &&
