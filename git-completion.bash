@@ -3504,6 +3504,7 @@ fi
 # function gets called, COMP_WORDS has already been populated so local
 # changes to COMP_WORDBREAKS have no effect.
 
+if ! type __git_get_comp_words_by_ref >/dev/null 2>&1; then
 __git_get_comp_words_by_ref ()
 {
 	local exclude i j first
@@ -3553,6 +3554,7 @@ __git_get_comp_words_by_ref ()
 	cur=${words[cword]}
 	prev=${words[cword-1]}
 }
+fi
 
 __git_func_wrap ()
 {
