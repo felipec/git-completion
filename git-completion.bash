@@ -2364,11 +2364,22 @@ __git_compute_config_vars ()
 	__git_config_vars="$(git help --config-for-completion)"
 }
 
+__git_compute_config_sections_old ()
+{
+	__git_compute_config_vars
+	echo "$__git_config_vars" |
+		awk -F . '{ dict[$1] = 1 } END { for (e in dict) print e }'
+}
+
 __git_config_sections=
 __git_compute_config_sections ()
 {
 	test -n "$__git_config_sections" ||
-	__git_config_sections="$(git help --config-sections-for-completion)"
+	__git_config_sections="$(
+		git help --config-sections-for-completion > /dev/null 2>&1 &&
+		git help --config-sections-for-completion ||
+		__git_compute_config_sections_old
+	)"
 }
 
 # Completes possible values of various configuration variables.
