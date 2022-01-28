@@ -12,6 +12,8 @@ if which zsh > /dev/null 2>&1; then
 	test_set_prereq ZSH
 fi
 
+export GIT_TEST_DEFAULT_INITIAL_BRANCH_NAME=master
+
 GIT_AUTHOR_EMAIL=author@example.com
 GIT_AUTHOR_NAME='A U Thor'
 GIT_COMMITTER_EMAIL=committer@example.com
