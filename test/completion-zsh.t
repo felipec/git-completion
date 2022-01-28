@@ -3,7 +3,7 @@
 # Copyright (c) 2012-2020 Felipe Contreras
 #
 
-test_description='test bash completion'
+test_description='test zsh completion'
 
 . ./lib-bash.sh
 
