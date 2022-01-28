@@ -2275,6 +2275,7 @@ _git_reflog ()
 	fi
 }
 
+__git_send_email_options="--no-cc-cover --cc= --no-bcc --force --relogin-delay= --to= --suppress-cc= --no-annotate --no-chain-reply-to --sendmail-cmd= --no-identity --transfer-encoding= --validate --no-smtp-auth --confirm= --no-format-patch --reply-to= --smtp-pass= --smtp-server= --annotate --envelope-sender= --no-validate --dry-run --no-thread --smtp-debug= --no-to --thread --no-xmailer --identity= --no-signed-off-cc --no-signed-off-by-cc --smtp-domain= --to-cover --8bit-encoding= --bcc= --smtp-ssl-cert-path= --smtp-user= --cc-cmd= --to-cmd= --no-cc --smtp-server-option= --in-reply-to= --subject= --batch-size= --smtp-auth= --compose --smtp-server-port= --xmailer --no-to-cover --chain-reply-to --smtp-encryption= --dump-aliases --quiet --smtp-ssl --signed-off-cc --signed-off-by-cc --suppress-from --compose-encoding= --no-suppress-from --sender= --from= --format-patch --cc-cover --numbered --no-numbered --signoff --stdout --cover-letter --numbered-files --suffix= --start-number= --reroll-count= --filename-max-length= --rfc --cover-from-description= --subject-prefix= --output-directory= --keep-subject --no-binary --zero-commit --ignore-if-in-upstream --no-stat --add-header= --from --attach --inline --signature= --base= --signature-file= --progress --interdiff= --range-diff= --creation-factor= --binary -- --no-signoff --no-stdout --no-cover-letter --no-numbered-files --no-suffix --no-start-number --no-reroll-count --no-filename-max-length --no-cover-from-description --no-zero-commit --no-ignore-if-in-upstream --no-add-header --no-from --no-in-reply-to --no-attach --no-signature --no-base --no-signature-file --no-quiet --no-progress --no-interdiff --no-range-diff --no-creation-factor"
 __git_send_email_confirm_options="always never auto cc compose"
 __git_send_email_suppresscc_options="author self cc bodycc sob cccmd body all"
 
@@ -2314,7 +2315,7 @@ _git_send_email ()
 		return
 		;;
 	--*)
-		__gitcomp_builtin send-email "$__git_format_patch_extra_options"
+		__gitcomp_builtin send-email "$__git_send_email_options $__git_format_patch_extra_options"
 		return
 		;;
 	esac
