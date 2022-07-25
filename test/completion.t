@@ -1432,6 +1432,161 @@ test_expect_success 'git checkout - with --detach, complete only references' '
 	EOF
 '
 
+test_expect_success 'setup sparse-checkout tests' '
+	# set up sparse-checkout repo
+	git init sparse-checkout &&
+	(
+		cd sparse-checkout &&
+		mkdir -p folder1/0/1 folder2/0 folder3 &&
+		touch folder1/0/1/t.txt &&
+		touch folder2/0/t.txt &&
+		touch folder3/t.txt &&
+		git add . &&
+		git commit -am "Initial commit"
+	)
+'
+
+test_expect_success 'sparse-checkout completes subcommands' '
+	test_completion "git sparse-checkout " <<-\EOF
+	list Z
+	init Z
+	set Z
+	add Z
+	reapply Z
+	disable Z
+	EOF
+'
+
+test_expect_success 'cone mode sparse-checkout completes directory names' '
+	# initialize sparse-checkout definitions
+	git -C sparse-checkout sparse-checkout set --cone folder1/0 folder3 &&
+
+	# test tab completion
+	(
+		cd sparse-checkout &&
+		test_completion "git sparse-checkout set f" <<-\EOF
+		folder1/
+		folder2/
+		folder3/
+		EOF
+	) &&
+
+	(
+		cd sparse-checkout &&
+		test_completion "git sparse-checkout set folder1/" <<-\EOF
+		folder1/0/
+		EOF
+	) &&
+
+	(
+		cd sparse-checkout &&
+		test_completion "git sparse-checkout set folder1/0/" <<-\EOF
+		folder1/0/1/
+		EOF
+	) &&
+
+	(
+		cd sparse-checkout/folder1 &&
+		test_completion "git sparse-checkout add 0" <<-\EOF
+		0/
+		EOF
+	)
+'
+
+test_expect_success 'cone mode sparse-checkout completes directory names with spaces and accents' '
+	# reset sparse-checkout
+	git -C sparse-checkout sparse-checkout disable &&
+	(
+		cd sparse-checkout &&
+		mkdir "directory with spaces" &&
+		mkdir "directory-with-áccent" &&
+		>"directory with spaces/randomfile" &&
+		>"directory-with-áccent/randomfile" &&
+		git add . &&
+		git commit -m "Add directory with spaces and directory with accent" &&
+		git sparse-checkout set --cone "directory with spaces" \
+			"directory-with-áccent" &&
+		test_completion "git sparse-checkout add dir" <<-\EOF &&
+		directory with spaces/
+		directory-with-áccent/
+		EOF
+		rm -rf "directory with spaces" &&
+		rm -rf "directory-with-áccent" &&
+		git add . &&
+		git commit -m "Remove directory with spaces and directory with accent"
+	)
+'
+
+# use FUNNYNAMES to avoid running on Windows, which doesn't permit tabs in paths
+test_expect_success FUNNYNAMES 'cone mode sparse-checkout completes directory names with tabs' '
+	# reset sparse-checkout
+	git -C sparse-checkout sparse-checkout disable &&
+	(
+		cd sparse-checkout &&
+		mkdir "$(printf "directory\twith\ttabs")" &&
+		>"$(printf "directory\twith\ttabs")/randomfile" &&
+		git add . &&
+		git commit -m "Add directory with tabs" &&
+		git sparse-checkout set --cone \
+			"$(printf "directory\twith\ttabs")" &&
+		test_completion "git sparse-checkout add dir" <<-\EOF &&
+		directory	with	tabs/
+		EOF
+		rm -rf "$(printf "directory\twith\ttabs")" &&
+		git add . &&
+		git commit -m "Remove directory with tabs"
+	)
+'
+
+# use FUNNYNAMES to avoid running on Windows, and !CYGWIN for Cygwin, as neither permit backslashes in paths
+test_expect_success FUNNYNAMES,!CYGWIN 'cone mode sparse-checkout completes directory names with backslashes' '
+	# reset sparse-checkout
+	git -C sparse-checkout sparse-checkout disable &&
+	(
+		cd sparse-checkout &&
+		mkdir "directory\with\backslashes" &&
+		>"directory\with\backslashes/randomfile" &&
+		git add . &&
+		git commit -m "Add directory with backslashes" &&
+		git sparse-checkout set --cone \
+			"directory\with\backslashes" &&
+		test_completion "git sparse-checkout add dir" <<-\EOF &&
+		directory\with\backslashes/
+		EOF
+		rm -rf "directory\with\backslashes" &&
+		git add . &&
+		git commit -m "Remove directory with backslashes"
+	)
+'
+
+test_expect_success 'non-cone mode sparse-checkout uses bash completion' '
+	# reset sparse-checkout repo to non-cone mode
+	git -C sparse-checkout sparse-checkout disable &&
+	git -C sparse-checkout sparse-checkout set --no-cone &&
+
+	(
+		cd sparse-checkout &&
+		# expected to be empty since we have not configured
+		# custom completion for non-cone mode
+		test_completion "git sparse-checkout set f" <<-\EOF
+
+		EOF
+	)
+'
+
+test_expect_success 'git sparse-checkout set --cone completes directory names' '
+	git -C sparse-checkout sparse-checkout disable &&
+
+	(
+		cd sparse-checkout &&
+		test_completion "git sparse-checkout set --cone f" <<-\EOF
+		folder1/
+		folder2/
+		folder3/
+		EOF
+	)
+'
+
 test_expect_success 'git switch - with -d, complete all references' '
 	test_completion "git switch -d " <<-\EOF
 	HEAD Z
@@ -2397,30 +2552,36 @@ test_expect_success 'options with value' '
 '
 
 test_expect_success 'sourcing the completion script clears cached commands' '
-	offgit &&
-	__git_compute_all_commands &&
-	verbose test -n "$__git_all_commands" &&
-	. "$SRC_DIR/git-completion.bash" &&
-	verbose test -z "$__git_all_commands"
+	(
+		offgit &&
+		__git_compute_all_commands &&
+		verbose test -n "$__git_all_commands" &&
+		. "$SRC_DIR/git-completion.bash" &&
+		verbose test -z "$__git_all_commands"
+	)
 '
 
 test_expect_success 'sourcing the completion script clears cached merge strategies' '
-	offgit &&
-	__git_compute_merge_strategies &&
-	verbose test -n "$__git_merge_strategies" &&
-	. "$SRC_DIR/git-completion.bash" &&
-	verbose test -z "$__git_merge_strategies"
+	(
+		offgit &&
+		__git_compute_merge_strategies &&
+		verbose test -n "$__git_merge_strategies" &&
+		. "$SRC_DIR/git-completion.bash" &&
+		verbose test -z "$__git_merge_strategies"
+	)
 '
 
 test_expect_failure 'sourcing the completion script clears cached --options' '
-	offgit &&
-	__gitcomp_builtin checkout &&
-	verbose test -n "$__gitcomp_builtin_checkout" &&
-	__gitcomp_builtin notes_edit &&
-	verbose test -n "$__gitcomp_builtin_notes_edit" &&
-	. "$SRC_DIR/git-completion.bash" &&
-	verbose test -z "$__gitcomp_builtin_checkout" &&
-	verbose test -z "$__gitcomp_builtin_notes_edit"
+	(
+		offgit &&
+		__gitcomp_builtin checkout &&
+		verbose test -n "$__gitcomp_builtin_checkout" &&
+		__gitcomp_builtin notes_edit &&
+		verbose test -n "$__gitcomp_builtin_notes_edit" &&
+		. "$SRC_DIR/git-completion.bash" &&
+		verbose test -z "$__gitcomp_builtin_checkout" &&
+		verbose test -z "$__gitcomp_builtin_notes_edit"
+	)
 '
 
 test_expect_success 'option aliases are not shown by default' '
@@ -2429,13 +2590,46 @@ test_expect_success 'option aliases are not shown by default' '
 '
 
 test_expect_unstable 'option aliases are shown with GIT_COMPLETION_SHOW_ALL' '
-	offgit &&
-	. "$SRC_DIR/git-completion.bash" &&
-	GIT_COMPLETION_SHOW_ALL=1 && export GIT_COMPLETION_SHOW_ALL &&
-	test_completion "git clone --recurs" <<-\EOF
-	--recurse-submodules Z
-	--recursive Z
-	EOF
+	(
+		offgit &&
+		. "$SRC_DIR/git-completion.bash" &&
+		GIT_COMPLETION_SHOW_ALL=1 && export GIT_COMPLETION_SHOW_ALL &&
+		test_completion "git clone --recurs" <<-\EOF
+		--recurse-submodules Z
+		--recursive Z
+		EOF
+	)
+'
+
+test_expect_success 'plumbing commands are excluded without GIT_COMPLETION_SHOW_ALL_COMMANDS' '
+	(
+		. "$SRC_DIR/git-completion.bash" &&
+		sane_unset GIT_TESTING_PORCELAIN_COMMAND_LIST &&
+
+		# Just mainporcelain, not plumbing commands
+		run_completion "git c" &&
+		grep checkout out &&
+		! grep cat-file out
+	)
+'
+
+test_expect_success 'all commands are shown with GIT_COMPLETION_SHOW_ALL_COMMANDS (also main non-builtin)' '
+	(
+		. "$SRC_DIR/git-completion.bash" &&
+		GIT_COMPLETION_SHOW_ALL_COMMANDS=1 &&
+		export GIT_COMPLETION_SHOW_ALL_COMMANDS &&
+		sane_unset GIT_TESTING_PORCELAIN_COMMAND_LIST &&
+
+		# Both mainporcelain and plumbing commands
+		run_completion "git c" &&
+		grep checkout out &&
+		grep cat-file out &&
+
+		# Check "gitk", a "main" command, but not a built-in + more plumbing
+		run_completion "git g" &&
+		grep gitk out &&
+		grep get-tar-commit-id out
+	)
 '
 
 test_expect_success '__git_complete' '
