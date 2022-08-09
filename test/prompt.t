@@ -18,6 +18,14 @@ c_green='\\[\\e[32m\\]'
 c_lblue='\\[\\e[1;34m\\]'
 c_clear='\\[\\e[0m\\]'
 
+unset GIT_PS1_SHOWDIRTYSTATE
+unset GIT_PS1_SHOWSTASHSTATE
+unset GIT_PS1_SHOWUNTRACKEDFILES
+unset GIT_PS1_COMPRESSSPARSESTATE
+unset GIT_PS1_SHOWUPSTREAM
+unset GIT_PS1_STATESEPARATOR
+unset GIT_PS1_SHOWCOLORHINTS
+
 test_expect_success 'setup for prompt tests' '
 	git init otherrepo &&
 	echo 1 >file &&
