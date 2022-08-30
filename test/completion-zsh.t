@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 #
-# Copyright (c) 2012-2020 Felipe Contreras
+# Copyright (c) 2012-2022 Felipe Contreras
 #
 
 test_description='test zsh completion'
@@ -8,7 +8,7 @@ test_description='test zsh completion'
 . ./lib-bash.sh
 
 if ! command -v zsh > /dev/null 2>&1; then
-	skip_all='skipping complete-zsh tests; zsh not available'
+	skip_all='skipping completion zsh tests: zsh not available'
 	test_done
 fi
 
@@ -33,7 +33,7 @@ test_completion ()
 		sed -e 's/Z$//' |sort >expected
 	fi &&
 	run_completion "$1" &&
-	sort out >out_sorted &&
+	sort -u out >out_sorted &&
 	test_cmp expected out_sorted
 }
 
@@ -46,7 +46,7 @@ test_gitcomp_opts ()
 	sed -e 's/Z$//' >expected &&
 	local cur="$1" &&
 	shift &&
-	run_completion "git func __gitcomp_opts $(printf "%q " "$@") "$cur"" &&
+	run_completion "git func __gitcomp_opts $(printf "%q " "$@") $cur" &&
 	test_cmp expected out
 }
 
@@ -59,7 +59,7 @@ test_gitcomp_nl ()
 	sed -e "s/Z$//" >expected &&
 	local cur="$1" &&
 	shift &&
-	run_completion "git func __gitcomp_nl $(printf "%q " "$@") "$cur"" &&
+	run_completion "git func __gitcomp_nl $(printf "%q " "$@") $cur" &&
 	test_cmp expected out
 }
 
@@ -903,9 +903,12 @@ test_expect_success 'complete tree filename with metacharacters' '
 test_expect_success PERL 'send-email' '
 	test_completion "git send-email ma" "main " &&
 	offgit &&
-	test_completion "git send-email --cov" <<-\EOF
+	test_completion "git send-email --cov" <<-\EOF &&
 	--cover-from-description=Z
 	--cover-letter Z
+	EOF
+	test_completion "git send-email --val" <<-\EOF
+	--validate Z
 	EOF
 '
 
@@ -1128,6 +1131,12 @@ test_expect_success 'options with value' '
 	test_completion "git merge -X diff-algorithm=" <<-\EOF
 
 	EOF
+'
+
+test_expect_success 'main sets correct __git_cmd_idx' '
+	echo modified > file1 &&
+	touch file3 &&
+	test_completion "compdef _git ga=git_add${LF}ga --update f" "file1"
 '
 
 test_done
