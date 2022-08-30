@@ -5,24 +5,24 @@
 
 . ./sharness.sh
 
-if which zsh > /dev/null 2>&1; then
-	test_set_prereq ZSH
-fi
-
 SRC_DIR="$SHARNESS_TEST_DIRECTORY"/..
 TRASH_DIRECTORY="$SHARNESS_TRASH_DIRECTORY"
 
-: ${GIT_TEST_DEFAULT_INITIAL_BRANCH_NAME:=master}
+: "${GIT_TEST_DEFAULT_INITIAL_BRANCH_NAME:=master}"
 export GIT_TEST_DEFAULT_INITIAL_BRANCH_NAME
 
-GIT_AUTHOR_EMAIL=author@example.com
-GIT_AUTHOR_NAME='A U Thor'
-GIT_COMMITTER_EMAIL=committer@example.com
-GIT_COMMITTER_NAME='C O Mitter'
-export GIT_AUTHOR_EMAIL GIT_AUTHOR_NAME
-export GIT_COMMITTER_EMAIL GIT_COMMITTER_NAME
+export GIT_AUTHOR_EMAIL=author@example.com
+export GIT_AUTHOR_NAME='A U Thor'
+export GIT_COMMITTER_EMAIL=committer@example.com
+export GIT_COMMITTER_NAME='C O Mitter'
+
+export LC_ALL=C
+export TERM=dumb
 
 unset GIT_EDITOR
+
+LF='
+'
 
 verbose () {
 	"$@" && return 0
@@ -70,7 +70,7 @@ test_tick () {
 	then
 		test_tick=1112911993
 	else
-		test_tick=$(($test_tick + 60))
+		test_tick=$((test_tick + 60))
 	fi
 	GIT_COMMITTER_DATE="$test_tick -0700"
 	GIT_AUTHOR_DATE="$test_tick -0700"

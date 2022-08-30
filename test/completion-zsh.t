@@ -7,7 +7,7 @@ test_description='test zsh completion'
 
 . ./lib-bash.sh
 
-if ! test_have_prereq ZSH; then
+if ! command -v zsh > /dev/null 2>&1; then
 	skip_all='skipping complete-zsh tests; zsh not available'
 	test_done
 fi
