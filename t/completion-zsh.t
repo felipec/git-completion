@@ -16,7 +16,7 @@ export SRC_DIR
 
 run_completion ()
 {
-	"$SRC_DIR/test/zsh/completion" "$1" > out
+	"$SRC_DIR/t/zsh/completion" "$1" > out
 	[[ -s out ]] || { echo > out ; }
 }
 

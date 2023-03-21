@@ -5,7 +5,7 @@ zshfuncdir := $(sharedir)/zsh
 all:
 
 test:
-	$(MAKE) -C test
+	$(MAKE) -C t
 
 D = $(DESTDIR)
 
