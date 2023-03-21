@@ -24,6 +24,95 @@ unset GIT_EDITOR
 LF='
 '
 
+test_cmp() {
+	${TEST_CMP:-diff -u} "$@"
+}
+
+test_when_finished() {
+	test_cleanup="{ $*
+		} && (exit \"\$eval_ret\"); eval_ret=\$?; $test_cleanup"
+}
+
+test_must_fail() {
+	"$@"
+	exit_code=$?
+	if test $exit_code = 0; then
+		echo >&2 "test_must_fail: command succeeded: $*"
+		return 1
+	elif test $exit_code -gt 129 -a $exit_code -le 192; then
+		echo >&2 "test_must_fail: died by signal: $*"
+		return 1
+	elif test $exit_code = 127; then
+		echo >&2 "test_must_fail: command not found: $*"
+		return 1
+	fi
+	return 0
+}
+
+test_must_be_empty() {
+	if test -s "$1"
+	then
+		echo "'$1' is not empty, it contains:"
+		cat "$1"
+		return 1
+	fi
+}
+
+test_set_prereq() {
+	satisfied_prereq="$satisfied_prereq$1 "
+}
+satisfied_prereq=" "
+
+test_have_prereq() {
+	# prerequisites can be concatenated with ','
+	save_IFS=$IFS
+	IFS=,
+	# shellcheck disable=SC2086
+	set -- $1
+	IFS=$save_IFS
+
+	total_prereq=0
+	ok_prereq=0
+	missing_prereq=
+
+	for prerequisite; do
+		case "$prerequisite" in
+		!*)
+			negative_prereq=t
+			prerequisite=${prerequisite#!}
+			;;
+		*)
+			negative_prereq=
+		esac
+
+		total_prereq=$((total_prereq + 1))
+		case "$satisfied_prereq" in
+		*" $prerequisite "*)
+			satisfied_this_prereq=t
+			;;
+		*)
+			satisfied_this_prereq=
+		esac
+
+		case "$satisfied_this_prereq,$negative_prereq" in
+		t,|,t)
+			ok_prereq=$((ok_prereq + 1))
+			;;
+		*)
+			# Keep a list of missing prerequisites; restore
+			# the negative marker if necessary.
+			prerequisite=${negative_prereq:+!}$prerequisite
+			if test -z "$missing_prereq"; then
+				missing_prereq=$prerequisite
+			else
+				missing_prereq="$prerequisite,$missing_prereq"
+			fi
+		esac
+	done
+
+	test $total_prereq = $ok_prereq
+}
+
 verbose () {
 	"$@" && return 0
 	echo >&4 "command failed: $(git rev-parse --sq-quote "$@")"
