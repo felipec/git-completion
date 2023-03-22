@@ -25,7 +25,7 @@ LF='
 '
 
 test_cmp() {
-	${TEST_CMP:-diff -u} "$@"
+	diff -u "$@"
 }
 
 test_when_finished() {

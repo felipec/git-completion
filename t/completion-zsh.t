@@ -1,16 +1,22 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Copyright (c) 2012-2022 Felipe Contreras
 #
 
 test_description='test zsh completion'
 
-. ./lib-bash.sh
-
-if ! command -v zsh > /dev/null 2>&1; then
-	skip_all='skipping completion zsh tests: zsh not available'
-	test_done
+if test -n "$ZSH_VERSION"; then
+	true
+elif command -v zsh > /dev/null 2>&1; then
+	exec zsh "$0" "$@"
+else
+	echo '1..0 #SKIP skipping zsh completion tests: zsh not available'
+	exit 0
 fi
+
+. ./test-lib.sh
+
+emulate zsh
 
 export SRC_DIR
 
