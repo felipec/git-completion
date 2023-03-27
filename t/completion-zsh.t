@@ -14,15 +14,29 @@ else
 	exit 0
 fi
 
+export ZDOTDIR="${0:h:a}/zsh"
+
 . ./test-lib.sh
 
 emulate zsh
+
+zmodload zsh/zpty
 
 export SRC_DIR
 
 run_completion ()
 {
-	"$SRC_DIR/t/zsh/completion" "$1" > out
+	local log
+
+	zpty zsh "zsh -o NO_GLOBAL_RCS"
+	zpty -n -w zsh "$1"$'\t'
+	zpty -r zsh log '*<END-CHOICES>'
+	zpty -d zsh
+
+	for x in ${(M)${(f)log}:#*'<LC><NO>'*}; do
+		print -- "${${x%'<EC>'*}#*'<RC>'}"
+	done > out
+
 	[[ -s out ]] || { echo > out ; }
 }
 
