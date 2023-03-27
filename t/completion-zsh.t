@@ -28,7 +28,8 @@ run_completion ()
 {
 	local log
 
-	zpty zsh "zsh -o NO_GLOBAL_RCS"
+	# bug in zsh: reset the exit trap
+	zpty zsh "trap - EXIT; zsh -o NO_GLOBAL_RCS"
 	zpty -n -w zsh "$1"$'\t'
 	zpty -r zsh log '*<END-CHOICES>'
 	zpty -d zsh
