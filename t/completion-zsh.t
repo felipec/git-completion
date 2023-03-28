@@ -34,9 +34,7 @@ run_completion ()
 	zpty -r zsh log '*<END-CHOICES>'
 	zpty -d zsh
 
-	for x in ${(M)${(f)log}:#*'<LC><NO>'*}; do
-		print -- "${${x%'<EC>'*}#*'<RC>'}"
-	done > out
+	printf '%s\n' ${${${(M)${(Qf)log}:#*'<MARK>'*}#*'<MARK>'}%'</MARK>'*} > out
 
 	[[ -s out ]] || { echo > out ; }
 }
