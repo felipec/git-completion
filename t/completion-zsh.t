@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Copyright (c) 2012-2022 Felipe Contreras
+# Copyright (c) 2012-2023 Felipe Contreras
 #
 
 test_description='test zsh completion'
@@ -75,7 +75,7 @@ test_gitcomp_opts ()
 # -: the rest are passed to __gitcomp_nl
 test_gitcomp_nl ()
 {
-	sed -e "s/Z$//" >expected &&
+	sed -e 's/Z$//' >expected &&
 	local cur="$1" &&
 	shift &&
 	run_completion "git func __gitcomp_nl $(printf "%q " "$@") $cur" &&
