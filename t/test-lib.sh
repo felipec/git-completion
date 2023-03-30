@@ -58,61 +58,6 @@ test_must_be_empty() {
 	fi
 }
 
-test_set_prereq() {
-	satisfied_prereq="$satisfied_prereq$1 "
-}
-satisfied_prereq=" "
-
-test_have_prereq() {
-	# prerequisites can be concatenated with ','
-	save_IFS=$IFS
-	IFS=,
-	# shellcheck disable=SC2086
-	set -- $1
-	IFS=$save_IFS
-
-	total_prereq=0
-	ok_prereq=0
-	missing_prereq=
-
-	for prerequisite; do
-		case "$prerequisite" in
-		!*)
-			negative_prereq=t
-			prerequisite=${prerequisite#!}
-			;;
-		*)
-			negative_prereq=
-		esac
-
-		total_prereq=$((total_prereq + 1))
-		case "$satisfied_prereq" in
-		*" $prerequisite "*)
-			satisfied_this_prereq=t
-			;;
-		*)
-			satisfied_this_prereq=
-		esac
-
-		case "$satisfied_this_prereq,$negative_prereq" in
-		t,|,t)
-			ok_prereq=$((ok_prereq + 1))
-			;;
-		*)
-			# Keep a list of missing prerequisites; restore
-			# the negative marker if necessary.
-			prerequisite=${negative_prereq:+!}$prerequisite
-			if test -z "$missing_prereq"; then
-				missing_prereq=$prerequisite
-			else
-				missing_prereq="$prerequisite,$missing_prereq"
-			fi
-		esac
-	done
-
-	test $total_prereq = $ok_prereq
-}
-
 verbose () {
 	"$@" && return 0
 	echo >&4 "command failed: $(git rev-parse --sq-quote "$@")"
@@ -186,8 +131,28 @@ sane_unset () {
 	return 0
 }
 
-test_set_prereq PERL
-test_set_prereq SYMLINKS
-test_set_prereq FUNNYNAMES
+# We don't need the full implementation
+test_set_prereq() {
+	:
+}
+
+test_have_prereq() {
+	# prerequisites can be concatenated with ','
+	save_IFS=$IFS
+	IFS=,
+	# shellcheck disable=SC2086
+	set -- $1
+	IFS=$save_IFS
+
+	for prerequisite; do
+		case "$prerequisite" in
+			PERL|SYMLINKS|FUNNYNAMES|FUNNIERNAMES|!CYGWIN|!MINGW)
+				;;
+			*)
+				return 1;
+				;;
+		esac
+	done
+}
 
 git init "$TRASH_DIRECTORY" || exit
