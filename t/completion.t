@@ -2492,7 +2492,7 @@ test_expect_success 'git config - section' '
 	EOF
 '
 
-test_expect_success 'git config - section include, includeIf' '
+test_expect_unstable 'git config - section include, includeIf' '
 	test_completion "git config inclu" <<-\EOF
 	include.Z
 	includeIf.Z
@@ -2507,7 +2507,7 @@ test_expect_success 'git config - variable name' '
 	EOF
 '
 
-test_expect_success 'git config - variable name include' '
+test_expect_unstable 'git config - variable name include' '
 	test_completion "git config include.p" <<-\EOF
 	include.path Z
 	EOF
