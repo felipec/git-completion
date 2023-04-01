@@ -429,7 +429,6 @@ __gitcomp_builtin_verify_tag_default=" --verbose --raw --format= --no-verbose --
 __gitcomp_builtin_version_default=" --build-options --no-build-options"
 __gitcomp_builtin_whatchanged_default=" --quiet --source --use-mailmap --decorate-refs= --decorate-refs-exclude= --decorate --no-quiet -- --no-source --no-use-mailmap --no-mailmap --no-decorate-refs --no-decorate-refs-exclude --no-decorate"
 __gitcomp_builtin_write_tree_default=" --missing-ok --prefix= --no-missing-ok -- --no-prefix"
-__gitcomp_builtin_send_email_default="--sender= --from= --smtp-auth= --8bit-encoding= --no-format-patch --no-bcc --no-suppress-from --no-annotate --relogin-delay= --no-cc --no-signed-off-cc --no-signed-off-by-cc --no-chain-reply-to --smtp-debug= --smtp-domain= --chain-reply-to --dry-run --compose --bcc= --smtp-user= --thread --cc-cover --identity= --to= --reply-to= --no-cc-cover --suppress-cc= --to-cmd= --smtp-server= --smtp-ssl-cert-path= --no-thread --smtp-server-option= --quiet --batch-size= --envelope-sender= --smtp-ssl --no-to --validate --format-patch --suppress-from --cc= --compose-encoding= --to-cover --in-reply-to= --annotate --smtp-encryption= --cc-cmd= --smtp-server-port= --smtp-pass= --signed-off-cc --signed-off-by-cc --no-xmailer --subject= --no-to-cover --confirm= --transfer-encoding= --no-smtp-auth --sendmail-cmd= --no-validate --no-identity --dump-aliases --xmailer --force --numbered --no-numbered --signoff --stdout --cover-letter --numbered-files --suffix= --start-number= --reroll-count= --filename-max-length= --rfc --cover-from-description= --subject-prefix= --output-directory= --keep-subject --no-binary --zero-commit --ignore-if-in-upstream --no-stat --add-header= --from --attach --inline --signature= --base= --signature-file= --progress --interdiff= --range-diff= --creation-factor= --binary -- --no-signoff --no-stdout --no-cover-letter --no-numbered-files --no-suffix --no-start-number --no-reroll-count --no-filename-max-length --no-cover-from-description --no-zero-commit --no-ignore-if-in-upstream --no-add-header --no-from --no-in-reply-to --no-attach --no-signature --no-base --no-signature-file --no-quiet --no-progress --no-interdiff --no-range-diff --no-creation-factor"
 
 __gitcomp_builtin_get_default ()
 {
@@ -2301,7 +2300,7 @@ _git_reflog ()
 	fi
 }
 
-__git_send_email_options="--no-cc-cover --cc= --no-bcc --force --relogin-delay= --to= --suppress-cc= --no-annotate --no-chain-reply-to --sendmail-cmd= --no-identity --transfer-encoding= --validate --no-smtp-auth --confirm= --no-format-patch --reply-to= --smtp-pass= --smtp-server= --annotate --envelope-sender= --no-validate --dry-run --no-thread --smtp-debug= --no-to --thread --no-xmailer --identity= --no-signed-off-cc --no-signed-off-by-cc --smtp-domain= --to-cover --8bit-encoding= --bcc= --smtp-ssl-cert-path= --smtp-user= --cc-cmd= --to-cmd= --no-cc --smtp-server-option= --in-reply-to= --subject= --batch-size= --smtp-auth= --compose --smtp-server-port= --xmailer --no-to-cover --chain-reply-to --smtp-encryption= --dump-aliases --quiet --smtp-ssl --signed-off-cc --signed-off-by-cc --suppress-from --compose-encoding= --no-suppress-from --sender= --from= --format-patch --cc-cover --numbered --no-numbered --signoff --stdout --cover-letter --numbered-files --suffix= --start-number= --reroll-count= --filename-max-length= --rfc --cover-from-description= --subject-prefix= --output-directory= --keep-subject --no-binary --zero-commit --ignore-if-in-upstream --no-stat --add-header= --from --attach --inline --signature= --base= --signature-file= --progress --interdiff= --range-diff= --creation-factor= --binary -- --no-signoff --no-stdout --no-cover-letter --no-numbered-files --no-suffix --no-start-number --no-reroll-count --no-filename-max-length --no-cover-from-description --no-zero-commit --no-ignore-if-in-upstream --no-add-header --no-from --no-in-reply-to --no-attach --no-signature --no-base --no-signature-file --no-quiet --no-progress --no-interdiff --no-range-diff --no-creation-factor"
+__gitcomp_builtin_send_email_default="--8bit-encoding= --add-header= --annotate --attach --base= --batch-size= --bcc= --binary --cc-cmd= --cc-cover --cc= --chain-reply-to --compose --compose-encoding= --confirm= --cover-from-description= --cover-letter --creation-factor= --dry-run --dump-aliases --envelope-sender= --filename-max-length= --force --force-in-body-from --format-patch --from --from= --identity= --ignore-if-in-upstream --in-reply-to= --inline --interdiff= --keep-subject --numbered --numbered-files --output-directory= --progress --quiet --range-diff= --relogin-delay= --reply-to= --reroll-count= --rfc --sender= --sendmail-cmd= --signature-file= --signature= --signed-off-by-cc --signed-off-cc --signoff --smtp-auth= --smtp-debug= --smtp-domain= --smtp-encryption= --smtp-pass= --smtp-server-option= --smtp-server-port= --smtp-server= --smtp-ssl --smtp-ssl-cert-path= --smtp-user= --start-number= --stdout --subject-prefix= --subject= --suffix= --suppress-cc= --suppress-from --thread --to-cmd= --to-cover --to= --transfer-encoding= --v= --validate --xmailer --zero-commit -- --no-add-header --no-annotate --no-attach --no-base --no-bcc --no-binary --no-cc --no-cc-cover --no-chain-reply-to --no-cover-from-description --no-cover-letter --no-creation-factor --no-filename-max-length --no-force-in-body-from --no-format-patch --no-from --no-identity --no-ignore-if-in-upstream --no-in-reply-to --no-interdiff --no-numbered --no-numbered-files --no-progress --no-quiet --no-range-diff --no-reroll-count --no-signature --no-signature-file --no-signed-off-by-cc --no-signed-off-cc --no-signoff --no-smtp-auth --no-start-number --no-stat --no-stdout --no-suffix --no-suppress-from --no-thread --no-to --no-to-cover --no-validate --no-xmailer --no-zero-commit"
 __git_send_email_confirm_options="always never auto cc compose"
 __git_send_email_suppresscc_options="author self cc bodycc sob cccmd body all"
 
@@ -2341,7 +2340,11 @@ _git_send_email ()
 		return
 		;;
 	--*)
-		__gitcomp_builtin send-email "$__git_send_email_options $__git_format_patch_extra_options"
+		# Older versions of git send-email don't have all the options
+		git send-email --git-completion-helper | grep -q annotate ||
+		__gitcomp_builtin_send_email=$__gitcomp_builtin_send_email_default
+
+		__gitcomp_builtin send-email "$__git_format_patch_extra_options"
 		return
 		;;
 	esac
@@ -2476,7 +2479,25 @@ __git_config_vars=
 __git_compute_config_vars ()
 {
 	test -n "$__git_config_vars" ||
-	__git_config_vars="$(git help --config-for-completion | sort -u)"
+	__git_config_vars="$(git help --config-for-completion)"
+}
+
+__git_compute_config_sections_old ()
+{
+	__git_compute_config_vars
+	echo "$__git_config_vars" |
+		awk -F . '{ dict[$1] = 1 } END { for (e in dict) print e }'
+}
+
+__git_config_sections=
+__git_compute_config_sections ()
+{
+	test -n "$__git_config_sections" ||
+	__git_config_sections="$(
+		git help --config-sections-for-completion > /dev/null 2>&1 &&
+		git help --config-sections-for-completion ||
+		__git_compute_config_sections_old
+	)"
 }
 
 # Completes possible values of various configuration variables.
@@ -2690,16 +2711,8 @@ __git_complete_config_variable_name ()
 		__gitcomp "$__git_config_vars" "" "$cur_" "$sfx"
 		;;
 	*)
-		__git_compute_config_vars
-		__gitcomp_nl "$(echo "$__git_config_vars" |
-				awk -F . '{
-					sections[$1] = 1
-				}
-				END {
-					for (s in sections)
-						print s "."
-				}
-				')" "" "$cur_" ""
+		__git_compute_config_sections
+		__gitcomp_nl "$__git_config_sections" "" "$cur_" "."
 		;;
 	esac
 }
