@@ -5,7 +5,7 @@
 
 test_description='test git-specific bash prompt functions'
 
-. ./lib-bash.sh
+. "$(dirname "$0")"/lib-bash.sh
 
 . "$SRC_DIR/git-prompt.sh"
 
