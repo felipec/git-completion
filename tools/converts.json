@@ -1,0 +1,7 @@
+[
+  [ "git-completion.zsh", "contrib/completion/git-completion.zsh" ],
+  [ "git-completion.bash", "contrib/completion/git-completion.bash" ],
+  [ "git-prompt.sh", "contrib/completion/git-prompt.sh" ],
+  [ "test/completion.t", "t/t9902-completion.sh" ],
+  [ "test/prompt.t", "t/t9903-bash-prompt.sh" ]
+]
