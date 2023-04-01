@@ -5,7 +5,7 @@
 
 test_description='test bash completion'
 
-. ./lib-bash.sh
+. "$(dirname "$0")"/lib-bash.sh
 
 complete ()
 {

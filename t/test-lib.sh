@@ -3,7 +3,7 @@
 # Copyright (c) 2005 Junio C Hamano
 #
 
-. ./sharness.sh
+. "$(dirname "$0")"/sharness.sh
 
 SRC_DIR="$SHARNESS_TEST_DIRECTORY"/..
 TRASH_DIRECTORY="$SHARNESS_TRASH_DIRECTORY"
