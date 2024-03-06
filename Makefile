@@ -5,6 +5,7 @@ zshfuncdir := $(sharedir)/zsh
 all:
 
 test:
+	ln -s git-completion.zsh t/zsh/_git
 	$(MAKE) -C t
 
 D = $(DESTDIR)
