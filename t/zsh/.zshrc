@@ -2,7 +2,7 @@ setopt zle
 setopt list_rows_first
 
 PS1="<PROMPT>"
-fpath=($ZDOTDIR $fpath)
+fpath=($ZDOTDIR "$SRC_DIR" $fpath)
 LISTMAX=1000
 
 autoload -U compinit && compinit -u

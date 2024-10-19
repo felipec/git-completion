@@ -1,7 +1,7 @@
 [
-  [ "git-completion.zsh", "contrib/completion/git-completion.zsh" ],
-  [ "git-completion.bash", "contrib/completion/git-completion.bash" ],
-  [ "git-prompt.sh", "contrib/completion/git-prompt.sh" ],
+  [ "src/_git", "contrib/completion/git-completion.zsh" ],
+  [ "src/git-completion.bash", "contrib/completion/git-completion.bash" ],
+  [ "src/git-prompt.sh", "contrib/completion/git-prompt.sh" ],
   [ "t/completion.t", "t/t9902-completion.sh" ],
   [ "t/completion-zsh.t", "t/t9904-completion-zsh.sh" ],
   [ "t/prompt.t", "t/t9903-bash-prompt.sh" ],
