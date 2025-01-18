@@ -7,6 +7,14 @@ test_description='test bash completion'
 
 . "$(dirname "$0")"/lib-bash.sh
 
+version=$(git version)
+if [[ "$version" == "git version "* ]]; then
+	printf "$version\ngit version 2.48\n" | sort -V -C || {
+		skip_all="git version with regression"
+		test_done
+	}
+fi
+
 complete ()
 {
 	# do nothing

@@ -18,6 +18,14 @@ export ZDOTDIR="${0:h:a}/zsh"
 
 . "$(dirname "$0")"/test-lib.sh
 
+version=$(git version)
+if [[ "$version" == "git version "* ]]; then
+	printf "$version\ngit version 2.48\n" | sort -V -C || {
+		skip_all="git version with regression"
+		test_done
+	}
+fi
+
 emulate zsh
 
 zmodload zsh/zpty
