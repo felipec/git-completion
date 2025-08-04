@@ -996,6 +996,15 @@ test_expect_success 'complete files' '
 	test_completion "git add mom" "momified"
 '
 
+test_expect_success "list aliases" '
+	test_config alias.foo checkout &&
+	test_config alias-foo.bar irrelevant &&
+	test_completion "git foo" <<-\EOF
+	foo
+	EOF
+	test_completion "git alias-foo" ""
+'
+
 test_expect_success "simple alias" '
 	test_config alias.co checkout &&
 	test_completion "git co m" <<-\EOF
