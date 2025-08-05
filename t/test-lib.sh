@@ -20,6 +20,7 @@ export LC_ALL=C
 export TERM=dumb
 
 unset GIT_EDITOR
+unset XDG_CONFIG_HOME
 
 LF='
 '
